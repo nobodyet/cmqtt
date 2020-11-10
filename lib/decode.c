@@ -44,6 +44,8 @@ unsigned int t_hall_count = 0;	 //用于计数 看收到了多少条消息 超�
 pthread_cond_t t_cond_hall;
 pthread_mutex_t t_mutex_hall;
 
+pthread_cond_t t_cond_sendmsg;
+pthread_mutex_t t_mutex_sendmsg;
 /******************************************************************
  *	Function Name:	RepeatRun
  *	Arguments:
@@ -236,8 +238,6 @@ void pthTime(void)
 	fflush(stdout);
 
 	timeGloble_g = time(NULL);
-	timeCheck_g = timeGloble_g;
-	//
 	srand(time(NULL) + getpid() + random() + timeGloble_g);
 	sleep(1);
 	log("在pthTime 中 初始化随机种子完毕,请勿再次初始化随机\n");

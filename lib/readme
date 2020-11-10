@@ -1,4 +1,1 @@
-    RWCACHE_SIZE = 8192
-
-  MAX_USER_NUM = 128
-
+ clean all for Cmqtt.svr

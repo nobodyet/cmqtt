@@ -18,30 +18,11 @@ MYLIBS = -Wl,-E -lrt -lpthread -lm -lz -ldl  /usr/lib64/mysql/libmysqlclient.so 
 LIB_LIB = ./src/main.o ./lib/lib.a
 
 #通用lib库
-LIB2_LIB = ./lib2/lib2.a
+SERVICE_LIB = 
 
-#lua lib库
-LUA_LIB = ./lua/liblua.a
-
-#redis相关文件
-REDIS_LIB = ./redis/redis.a
-
-#协议库
-LUALIB_PROTO_O = ./lualib/proto.o
-
-#cjson路径及库文件
-CJSON_PATH = ./cjson
-CJSON_OBJS = $(CJSON_PATH)/lua_cjson.o $(CJSON_PATH)/strbuf.o $(CJSON_PATH)/fpconv.o
-
-#luasql路径及库文件
-LUASQL_PATH = ./luasql-mysql
-LUASQL_OBJS = $(LUASQL_PATH)/src/luasql.o $(LUASQL_PATH)/src/ls_mysql.o
-
-
-
-#基础的lua文件
-#INIT_LUA_SCRIPT = init.lua
-#DEVLOG_LUA_SCRIPT = devlog.lua
+#MQTT 相关文件
+MQTT_LIB = ./mqttlib/MQTTAsync.a
+MQTT_PATH = ./mqttlib/
 
 #设置运行目录 及脚本目录
 RUN_PATH = ../
@@ -56,52 +37,29 @@ all: lib $(TARGET)
 
 #
 lib:
-	cd lua && $(MAKE) linux
-	cd cjson && $(MAKE)
-	cd redis && $(MAKE)
 	cd lib && $(MAKE)
-	cd lib2 && $(MAKE)
-	cd lualib && $(MAKE)
 	@#cd game && $(MAKE)
-ifneq (,$(wildcard ./fc/fc.c))
-	@#如果fc目录下有文件fc.c 才能进去啊
-	cd fc && $(MAKE)
-endif
 ifneq (,$(wildcard ./src/main.c))
 	@#如果存在main.c则需要清除及重新编译
 	cd src && $(MAKE)
 endif
 
 #目标 生成游戏主程序 并附带copy一些脚本
-$(TARGET): $(CJSON_OBJS) $(LUASQL_OBJS) $(FC_OBJS) $(LUALIB_PROTO_O) $(FC_LIB) $(LIB2_LIB) $(LIB_LIB) $(REDIS_LIB) $(LUA_LIB)
+$(TARGET): $(LIB_LIB) $(MQTT_LIB)
 	@# 后面的lib库在调整先后位置后可能导致编译出错哦
-	$(CC) -o $(TARGET) $(CFLAGS) $(MYLIBS) $(CJSON_OBJS) $(LUASQL_OBJS) $(FC_OBJS) $(LUALIB_PROTO_O) $(FC_LIB) $(LIB2_LIB) $(LIB_LIB) $(REDIS_LIB) $(LUA_LIB)
+	$(CC) -o $(TARGET) $(CFLAGS) $(MYLIBS) $(LIB_LIB) $(MQTT_LIB)
 	$(CP) $(TARGET) $(RUN_PATH)
 	$(RM) $(TARGET)
 
-#cjson库
-$(CJSON_OBJS):$(CJSON_PATH)/lua_cjson.c $(CJSON_PATH)/strbuf.c $(CJSON_PATH)/fpconv.c
-	cd cjson && $(MAKE)
+# MQTT_LIB 的生成方法
+$(MQTT_LIB):
+		cd $(MQTT_PATH)  && $(MAKE) 
 
-#luasql库
-$(LUASQL_OBJS):$(LUASQL_PATH)/src/luasql.c $(LUASQL_PATH)/src/luasql.h $(LUASQL_PATH)/src/ls_mysql.c
-	cd $(LUASQL_PATH) && $(MAKE)
-
-#liblua.a的生成方法
-$(LUA_LIB):
-	cd lua && $(MAKE) linux
 
 #普通清理
 clean:
 	cd lib && $(MAKE) clean
-	cd lib2 && $(MAKE) clean
-	cd lualib && $(MAKE) clean
-	cd redis && $(MAKE) clean
 	$(RM) $(TARGET)
-ifneq (,$(wildcard ./fc/fc.c))
-	@#如果fc目录下有文件fc.c 才能进去啊
-	cd fc && $(MAKE) clean
-endif
 ifneq (,$(wildcard ./src/main.c))
 	@#如果存在main.c则需要清除及重新编译
 	cd src && $(MAKE) clean
@@ -110,18 +68,16 @@ endif
 
 #深度清理
 cleanall: clean
-	cd lua && $(MAKE) clean
-	cd cjson && $(MAKE) clean
 	cd lib && $(MAKE) cleanall
-	cd lib2 && $(MAKE) clean
-
-ifneq (,$(wildcard fc/feicui.c))
-	@#如果fc目录下有文件feicui.c 才能进去啊
-	cd fc && $(MAKE) cleanall
+	cd $(MQTT_PATH)  && $(MAKE) clean
+	$(RM) $(TARGET)
+ifneq (,$(wildcard src/main.c))
+	@#如果src 目录下有文件 main.c 才能进去啊
+	cd src && $(MAKE) clean
 endif
 
-	@#如果是liuqing的目录 则还多做点事情
-ifeq "$(HOME)" "/home/liuqing"
+	@#如果是 bighead 的目录 则还多做点事情
+ifeq "$(HOME)" "/home/bighead"
 	find . -name cscope\.*  -exec rm -f {} \;
 	find . -name tags -exec rm -f {} \;
 endif

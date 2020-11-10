@@ -53,7 +53,7 @@ static int isInRunning(const char *filename)
 
 	/* write pid */
 	ftruncate(fd, 0);
-	slog(buf, "%ld", (long)getpid());
+	sprintf(buf, "%ld", (long)getpid());
 	write(fd, buf, strlen(buf) + 1);
 	fflush(stdout);
 
@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 		char g_lock_file_path[2048] = ""; //文件锁的路径
 		get_executable_path(path, processname, sizeof(path));
 
-		snlog(g_lock_file_path, sizeof(g_lock_file_path) - 1, "/tmp/%s.SVR.pid", processname);
+		snprintf(g_lock_file_path, sizeof(g_lock_file_path) - 1, "/tmp/%s.SVR.pid", processname);
 		if (isInRunning(g_lock_file_path))
 		{
 			log("获取文件锁[%s]失败 exit\n", g_lock_file_path);
@@ -178,11 +178,11 @@ int main(int argc, char **argv)
 		if (argc == 2)
 		{
 
-			slog(configFilePath, "%s/%s", argv[1], CONFIG_FILE);
+			sprintf(configFilePath, "%s/%s", argv[1], CONFIG_FILE);
 		}
 		else
 		{
-			slog(configFilePath, "%s", CONFIG_FILE);
+			sprintf(configFilePath, "%s", CONFIG_FILE);
 		}
 		ret = atoi(GetInitKey(configFilePath, "GATE", "CHECK_ALIVE_TIME"));
 		CHECK_ALIVE_TIME = ret ? ret : CHECK_ALIVE_TIME;

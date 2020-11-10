@@ -1,4 +1,4 @@
-.PHONY: all
+.PHONY: all clean cleanall 
 
 CC = gcc
 
@@ -6,7 +6,7 @@ INC_PATH = ../include
 
 CFLAGS = -O2 -lrt -g -Wall -W -Wpointer-arith -Wstrict-prototypes -c
 
-OBJS = decode.o globle.o mysql.sdk.o init.o lib.sybase.o sdk.sybase.o
+OBJS = decode.o globle.o mysql.sdk.o init.o 
 
 
 #定义最后生成的静态库文件
@@ -28,6 +28,7 @@ decode.o: decode.c $(INC_PATH)/decode.h
 globle.o: globle.c $(INC_PATH)/globle.h
 	$(CC) $(CFLAGS) globle.c
 
+clean: cleanall
 
 cleanall:
 	rm -f $(OBJS) $(LIB_A)
