@@ -1,0 +1,86 @@
+#---------------------------------
+#程序运行的配置文件 2007-1-17
+# 2009-7-23
+#---------------------------------
+
+# redis信息
+[REDIS]
+HOST = redisdb
+PORT = 6379
+DBID = __AUTO_REPLACE__
+AUTH = PASSWORD 
+
+# [只有游戏服务器才会读取] 是为了区分redis中不同游戏的key 需要与loginserver和matchserver中的relaxgame.lua配置的相同
+MARK=__AUTO_REPLACE__
+[REDIS]
+
+# 配置服务信息
+[SERVICE]
+# 服务类型 [login:登录服务器 match:比赛服务器 game:游戏服务器]
+SERVICE_TYPE=__AUTO_REPLACE__
+
+# 配置独特的脚本目录名称
+UNIQUE_DIR=__AUTO_REPLACE__
+
+# [只有游戏服务器才会读取] 游戏编号
+GAMEID=__AUTO_REPLACE__
+
+# add by liuqing 20170307 方便内网开发调试 直接应用开发目录下的脚本 这里加一个调试开关
+# [需要发布时可以用sed批量替换"DEBUG_MODE= 1"为"DEBUG_MODE= 0" 一般无需手动编辑]
+# 调试模式 0:关 1:开  外网需要置为0
+DEBUG_MODE=1
+[SERVICE]
+
+######################### 以下内容一般无需修改 #########################
+
+#应用服务器配置文件
+[GATE]
+# 本服务器用的cmdbig 一般只需改这一个
+BIGCMD=__AUTO_REPLACE__
+
+# gate的IP及PORT地址
+IP=127.0.0.1
+PORT=16002
+
+######################### 以下内容一般无需修改 #########################
+#--------------------------------------------------------------
+#网卡配置信息 ETH=0 表示当前使用ETH0网卡作为外网  数据类型=整型
+#ETH=0
+ETH=0
+
+#通知客户端定期汇报点击等用户信息的间隔时长 秒 数据类型=整型
+#CHECK_ALIVE_TIME=600
+CHECK_ALIVE_TIME=600
+
+#定期更新的时间间隔 单位 秒 数据类型=整型
+#HALL_REFRESH_TIME=600
+HALL_REFRESH_TIME=6000
+
+#栏目点击数目，定期回写数据库时长 单位 秒 数据类型=整型
+#CLICK_REFRESH_TIME=200
+CLICK_REFRESH_TIME=200
+
+#系统判断超时用户的参数 超时时间= MAX_SOCK_LIFE * 2 秒
+#MAX_SOCK_LIFE=	150
+MAX_SOCK_LIFE=100
+
+#系统初始赋值给成功登录用户的生命值 时间＝LOGINED_LIFE * 2 秒
+#LOGIN_LIFE=60
+LOGIN_LIFE=2
+
+#连接以后不发数据而不会被服务器关闭连接的最大时间 CONNECT_LIFE*2 秒
+#建议赋值不小于 2
+#CONNECT_LIFE=5
+CONNECT_LIFE=5
+
+# add by yellowbug 20140708
+JJMASTER=192.168.235:7788
+
+MYSQL_SERVERIP=svrip
+MYSQL_USERID=user
+MYSQL_PASSWD=pwd
+MYSQL_DATABASE=dbname
+[GATE]
+
+
+

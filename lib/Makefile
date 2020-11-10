@@ -1,0 +1,33 @@
+.PHONY: all
+
+CC = gcc
+
+INC_PATH = ../include
+
+CFLAGS = -O2 -lrt -g -Wall -W -Wpointer-arith -Wstrict-prototypes -c
+
+OBJS = decode.o globle.o mysql.sdk.o init.o lib.sybase.o sdk.sybase.o
+
+
+#定义最后生成的静态库文件
+LIB_A=lib.a
+AR= ar rcu
+RANLIB= ranlib
+
+
+all: $(LIB_A)
+
+#生成 lib.a 方便外面引用
+$(LIB_A):$(OBJS)
+	$(AR) $@ $(OBJS)
+	$(RANLIB) $@
+
+decode.o: decode.c $(INC_PATH)/decode.h
+	$(CC) $(CFLAGS) decode.c
+
+globle.o: globle.c $(INC_PATH)/globle.h
+	$(CC) $(CFLAGS) globle.c
+
+
+cleanall:
+	rm -f $(OBJS) $(LIB_A)

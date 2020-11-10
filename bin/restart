@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#切换到当前目录
+ShDir=${0%/*}
+cd $ShDir
+
+ulimit -c 1000000
+ulimit -n 65535
+
+#启动程序
+if [ "aireboot" = "${1}" ]; then
+	make aireboot
+else
+	make reboot
+fi
+
