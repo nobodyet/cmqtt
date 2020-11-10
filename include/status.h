@@ -12,11 +12,6 @@
 
 #include "debug.h"
 
-//用户状态
-#define ROM_CONNED_STATE 0
-#define ROM_WAIT_QUIT -1
-#define ROM_QUIT -10
-
 //消息错误返回码
 #define SUCCESS 0
 #define FAILURE 1

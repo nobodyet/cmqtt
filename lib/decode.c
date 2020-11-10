@@ -11,15 +11,9 @@
 ******************************************************************/
 #define LOG_TAG "decode"
 
-#include "../include/debug.h" // add by YellowBug 2012-7-18
-#include "../include/data.h"  // add by YellowBug 2012-8-1
 #include "../include/decode.h"
-#include "../include/globle.h"
-#include "../include/mysql.sdk.h"
-#include <time.h>
-#include <errno.h>
-#include <pthread.h>
-#include <sys/syscall.h>
+#include "../service/db.h"
+
 
 //#define TIME_USE
 #ifdef TIME_USE

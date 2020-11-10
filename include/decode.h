@@ -2,6 +2,8 @@
 #define DECODE_H_
 #include <pthread.h>
 #include <sys/time.h>
+#include <errno.h>
+#include <sys/syscall.h
 
 #include "status.h"
 #include "globle.h"
@@ -9,6 +11,9 @@
 #include "init.h"
 
 // #include "cmd.init.h"
+#include "debug.h" // add by YellowBug 2012-7-18
+#include "data.h"  // add by YellowBug 2012-8-1
+#include "mysql.sdk.h"
 
 #define DECODE_DATA_FILE "decode.file"
 
