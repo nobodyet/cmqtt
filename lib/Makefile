@@ -31,4 +31,8 @@ globle.o: globle.c $(INC_PATH)/globle.h
 clean: cleanall
 
 cleanall:
+ifneq (,$(wildcard *.c))
+	@#如果存在 c 则需要清除及重新编译
 	rm -f $(OBJS) $(LIB_A)
+endif
+	@echo "clean DONE"

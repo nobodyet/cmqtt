@@ -3,7 +3,7 @@
 #include <pthread.h>
 #include <sys/time.h>
 #include <errno.h>
-#include <sys/syscall.h
+#include <sys/syscall.h>
 
 #include "status.h"
 #include "globle.h"

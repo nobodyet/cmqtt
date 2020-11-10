@@ -12,7 +12,7 @@
 #define LOG_TAG "decode"
 
 #include "../include/decode.h"
-#include "../service/db.h"
+#include "../core/core.h"
 
 
 //#define TIME_USE
@@ -54,6 +54,7 @@ void RepeatRun(void)
 	while (1)
 	{
 		sleep(1);
+    core_repeat_1s(timeGloble_g);
 	}
 }
 
@@ -97,8 +98,8 @@ void Hall(void)
 	mysqlHall = &mysqlHallConn;
 	mysqlADD = &mysqlADDConn;
 
-	assert(db_init(mysqlHall)); //comment by bull 2017/2/6
-	assert(do_init(mysqlADD));	//edit by liuqing 20180920 这里面是执行的脚本初始化 在此之前 需要全局的时间变量被赋值了
+	assert(0 == db_init(mysqlHall)); //comment by bull 2017/2/6
+	assert(0 == core_init());	//edit by liuqing 20180920 这里面是执行的脚本初始化 在此之前 需要全局的时间变量被赋值了
 	sleep(2);					//edit by liuqing 20180917 fc_init 里 RecvMsg线程在连接成功时sleep 2s. 这里不能比那个还提前
 	log("Hall thread start decode msg. now:%ld\n", time(NULL));
 
@@ -113,7 +114,7 @@ void Hall(void)
 		}
 #endif
 
-		//doTimes = fc_heart(nowTime);
+		doTimes = core_heart(nowTime);
 
 		//edit by liuqing 20181031 可能本次心跳处理耗时超过了1s 导致本应调用 do_core 而推迟到下次调用了
 		// 外网就出现过脚本中连续两次心跳时间相差了5s 且5s内处理的消息条数为531>256*2
@@ -137,20 +138,12 @@ void Hall(void)
 		//edit by liuqing 20171215 游戏逻辑的心跳只需要1秒调用一次
 		if (lastHeartTime != nowTime)
 		{
-			if (lastHeartTime > nowTime)
-			{
-				printf("Hall error. lastHeartTime(%d)>nowTime(%d)\n", lastHeartTime, nowTime);
-				fflush(stdout);
-			}
-			else
-			{
 				lastHeartTime = nowTime;
-				do_core(nowTime);
+				core_heart_1s(nowTime);
 #ifdef DEBUG_HALL_COND
 				printf("LQTEST: Hall do_core\n");
 				fflush(stdout);
 #endif
-			}
 		}
 
 #ifdef TIME_USE

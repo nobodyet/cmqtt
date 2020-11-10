@@ -8,14 +8,22 @@
 
 #define DBLIBNAME		"LZdb"
 
-static MYSQL * _db = NULL;
 
 
+int core_init(){
+  int ret =0 ;
+  
+  return ret;
+}
 
-int
-db_init(MYSQL * db) {
-	_db = db;
-	return 0==mysqlConnetInit(_db)?1:0;
+
+int db_init(MYSQL * db) {
+  int ret;
+
+  MYSQL * _db = db;
+  ret = mysqlConnetInit(_db)?1:0;
+
+	return ret; 
 }
 
 
