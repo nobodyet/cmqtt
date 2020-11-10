@@ -14,7 +14,6 @@
 #include "../include/decode.h"
 #include "../core/core.h"
 
-
 //#define TIME_USE
 #ifdef TIME_USE
 #define TU_SAMPLING_RATE 800 // 采样频率
@@ -54,7 +53,7 @@ void RepeatRun(void)
 	while (1)
 	{
 		sleep(1);
-    core_repeat_1s(timeGloble_g);
+		core_repeat_1s(timeGloble_g);
 	}
 }
 
@@ -99,8 +98,8 @@ void Hall(void)
 	mysqlADD = &mysqlADDConn;
 
 	assert(0 == db_init(mysqlHall)); //comment by bull 2017/2/6
-	assert(0 == core_init());	//edit by liuqing 20180920 这里面是执行的脚本初始化 在此之前 需要全局的时间变量被赋值了
-	sleep(2);					//edit by liuqing 20180917 fc_init 里 RecvMsg线程在连接成功时sleep 2s. 这里不能比那个还提前
+	assert(0 == core_init());		 //edit by liuqing 20180920 这里面是执行的脚本初始化 在此之前 需要全局的时间变量被赋值了
+	sleep(2);						 //edit by liuqing 20180917 fc_init 里 RecvMsg线程在连接成功时sleep 2s. 这里不能比那个还提前
 	log("Hall thread start decode msg. now:%ld\n", time(NULL));
 
 	while (1)
@@ -138,11 +137,11 @@ void Hall(void)
 		//edit by liuqing 20171215 游戏逻辑的心跳只需要1秒调用一次
 		if (lastHeartTime != nowTime)
 		{
-				lastHeartTime = nowTime;
-				core_heart_1s(nowTime);
+			lastHeartTime = nowTime;
+			core_heart_1s(nowTime);
 #ifdef DEBUG_HALL_COND
-				printf("LQTEST: Hall do_core\n");
-				fflush(stdout);
+			printf("LQTEST: Hall do_core\n");
+			fflush(stdout);
 #endif
 		}
 
