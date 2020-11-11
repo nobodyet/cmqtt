@@ -20,26 +20,11 @@
 #include "MQTTAsync.h"
 
 #include "../include/globe.h"
-#if !defined(_WIN32)
 #include <unistd.h>
-#else
-#include <windows.h>
-#endif
 
 #if defined(_WRS_KERNEL)
 #include <OsWrapper.h>
 #endif
-
-#define MQTT_USERNAME "MQTT_SVR_USER"
-#define MQTT_PWD "MQTT_SVR_PWD"
-#define ADDRESS "tcp://mqtt.eclipse.org:1883"
-#define CLIENTID "ExampleClientPub"
-#define TOPIC "MQTT Examples"
-#define PAYLOAD "Hello World!"
-#define QOS 1
-#define TIMEOUT 10000L
-
-int finished = 0;
 
 static void *client_context;
 static MQTTAsync_connectOptions client_conn_opts = MQTTAsync_connectOptions_initializer;
@@ -49,14 +34,18 @@ void myReconnctMQTT(void *contxt)
     MQTTAsync client = (MQTTAsync)context;
     MQTTAsync_connectOptions *conn_opts = &client_conn_opts;
     int rc;
+    int cout = 0;
     conn_opts.keepAliveInterval = CHECK_ALIVE_TIME;
     conn_opts.cleansession = 1;
 
-    sleep(2);
-    if ((rc = MQTTAsync_connect(client, &conn_opts)) != MQTTASYNC_SUCCESS)
+    do
     {
-        printf("Failed to start connect, return code %d\n", rc);
-    }
+        /* code */
+        sleep(3);
+        rc = MQTTAsync_connect(client, &conn_opts);
+        printf("%s Reconncting MQTT.Server \n");
+
+    } while ((rc != MQTTASYNC_SUCCESS)) && (count--);
 }
 
 void connlost(void *context, char *cause)
@@ -116,7 +105,6 @@ void onSend(void *context, MQTTAsync_successData *response)
 void onConnectFailure(void *context, MQTTAsync_failureData *response)
 {
     printf("Connect failed, rc %d\n", response ? response->code : 0);
-    finished = 1;
 }
 
 void onConnect(void *context, MQTTAsync_successData *response)
@@ -134,50 +122,63 @@ int my_mqqta_sendmsg(char *topicName, MQTTAsync_message *pubmsg)
     //opts.onSuccess = onSend;
     opts.onFailure = onSendFailure;
     opts.context = client;
-    if ((rc = MQTTAsync_sendMessage(client, TOPIC, pubmsg, &opts)) != MQTTASYNC_SUCCESS)
+    if ((rc = MQTTAsync_sendMessage(client, topicName, pubmsg, &opts)) != MQTTASYNC_SUCCESS)
     {
         printf("Failed to start sendMessage, return code %d\n", rc);
         return (EXIT_FAILURE);
     }
+    debug("Message Send: topic:%s \n", topicName);
     return rc;
 }
 
-int messageArrived(void *context, char *topicName, int topicLen, MQTTAsync_message *m)
+// 注意该回调函数必须返回 1 (此时必须 free (topic和message));  如果ret=0, 表示错误,会触发上层重传处理,此时不能进行 free操作
+int my_mqqta_recvmsg(void *context, char *topicName, int topicLen, MQTTAsync_message *message)
 {
-    /* not expecting any messages */
+
+    debug("Message arrived: topic: %s payload: %.*s\n", topicName, message->payloadlen, (char *)message->payload);
+    decode_msg();
+    MQTTAsync_freeMessage(&message);
+    MQTTAsync_free(topicName);
     return 1;
 }
 
 int init_mqtt_client()
 {
-    MQTTAsync client = (MQTTAsync)client_context;
+    MQTTAsync client;
     MQTTAsync_connectOptions *conn_opts = &client_conn_opts;
     int rc;
 
-    if ((rc = MQTTAsync_create(&client, ADDRESS, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL)) != MQTTASYNC_SUCCESS)
+    if ((rc = MQTTAsync_create(&client_context, MQTT_ADDRESS_g, MQTT_CLIENTID_g, MQTTCLIENT_PERSISTENCE_NONE, NULL)) != MQTTASYNC_SUCCESS)
     {
         printf("Failed to create client object, return code %d\n", rc);
         exit(EXIT_FAILURE);
     }
+    client = client_context;
 
-    if ((rc = MQTTAsync_setCallbacks(client, client, connlost, messageArrived, NULL)) != MQTTASYNC_SUCCESS)
+    if ((rc = MQTTAsync_setCallbacks(client, client, connlost, my_mqqta_recvmsg, NULL)) != MQTTASYNC_SUCCESS)
     {
         printf("Failed to set callback, return code %d\n", rc);
         exit(EXIT_FAILURE);
     }
 
-    conn_opts->keepAliveInterval = CHECK_ALIVE_TIME;
+    conn_opts->keepAliveInterval = MQTT_KEEPALIVE_g;
     conn_opts->cleansession = 1;
     conn_opts->onSuccess = onConnect;
     conn_opts->onFailure = onConnectFailure;
     conn_opts->context = client;
 
-    strcpy(conn_opts->username, MQTT_USERNAME);
-    strcpy(conn_opts->password, MQTT_PWD);
+    strcpy(conn_opts->username, MQTT_USERNAME_g);
+    strcpy(conn_opts->password, MQTT_PWD_g);
 
     if ((rc = MQTTAsync_connect(client, conn_opts)) != MQTTASYNC_SUCCESS)
     {
+        printf("* <b>1</b>: Connection refused: Unacceptable protocol version<br>\
+                * <b>2</b>: Connection refused: Identifier rejected<br>\
+                * <b>3</b>: Connection refused: Server unavailable<br>\
+                * <b>4</b>: Connection refused: Bad user name or password<br>\
+                * <b>5</b>: Connection refused: Not authorized<br>\n");
         printf("Failed to start connect, return code %d\n", rc);
+
         exit(EXIT_FAILURE);
     }
 

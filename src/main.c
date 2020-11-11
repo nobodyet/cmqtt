@@ -168,11 +168,12 @@ int main(int argc, char **argv)
 			log("设置系统资源参数成功！ Max File Limit=%ld\n", rt.rlim_cur);
 		}
 	}
-	//get the eth1
-	//目前不需要获取本机地址
-	//getInternetIP(localServerIP_g,atoi(GetInitKey(configFilePath,"GATE","ETH")));
+
+	/* 读取配置文件信息,获取初始化信息 */
+
 	{
 		char *configFilePath = NULL;
+		char tmpResultStr[512] = {0};
 		configFilePath = malloc(1024);
 		memset(configFilePath, 0, 1024);
 		if (argc == 2)
@@ -184,20 +185,30 @@ int main(int argc, char **argv)
 		{
 			sprintf(configFilePath, "%s", CONFIG_FILE);
 		}
-		ret = atoi(GetInitKey(configFilePath, "GATE", "CHECK_ALIVE_TIME"));
-		CHECK_ALIVE_TIME = ret ? ret : CHECK_ALIVE_TIME;
 
-		ret = atoi(GetInitKey(configFilePath, "GATE", "HALL_REFRESH_TIME"));
-		HALL_REFRESH_TIME = ret ? ret : HALL_REFRESH_TIME;
+		// 心跳
+		ret = atoi(GetInitKey(configFilePath, "MQTT", "GAME_HEART_BEAT"));
+		GAME_HEART_BEAT_g = ret ? ret : GAME_HEART_BEAT_g;
 
-		ret = atoi(GetInitKey(configFilePath, "GATE", "MAX_SOCK_LIFE"));
-		MAX_SOCK_LIFE = ret ? ret : MAX_SOCK_LIFE;
+		// keepalive
+		ret = atoi(GetInitKey(configFilePath, "MQTT", "MQTT_KEEPALIVE"));
+		MQTT_KEEPALIVE_g = ret ? ret : MQTT_KEEPALIVE_g;
 
-		ret = atoi(GetInitKey(configFilePath, "GATE", "LOGIN_LIFE"));
-		LOGINED_LIFE = ret ? ret : LOGINED_LIFE;
+		memcpy(tmpResultStr, GetInitKey(dataFile, "MQTT", "MQTT_SVR_IP"), 256);
+		if (strlen(tmpResultStr))
+			memcpy(MQTT_SVR_IP_g, tmpResultStr, 256);
 
-		ret = atoi(GetInitKey(configFilePath, "GATE", "CONNECT_LIFE"));
-		CONNECT_LIFE = ret ? ret : CONNECT_LIFE;
+		memcpy(tmpResultStr, GetInitKey(dataFile, "MQTT", "MQTT_CLIENTID"), 256);
+		if (strlen(tmpResultStr))
+			memcpy(MQTT_CLIENTID_g, tmpResultStr, 256);
+
+		memcpy(tmpResultStr, GetInitKey(dataFile, "MQTT", "MQTT_USERNAME"), 256);
+		if (strlen(tmpResultStr))
+			memcpy(MQTT_USERNAME_g, tmpResultStr, 256);
+
+		memcpy(tmpResultStr, GetInitKey(dataFile, "MQTT", "MQTT_PWD"), 256);
+		if (strlen(tmpResultStr))
+			memcpy(MQTT_PWD_g, tmpResultStr, 256);
 
 		initMysqlAccount(configFilePath); //comment by bull 2017/2/6 //edit by liuqing 20180307
 
@@ -219,13 +230,12 @@ int main(int argc, char **argv)
 	sleep(1);
 
 	//edit by liuqing 20180920 这个线程没用 先屏蔽掉
-	pthread_create(&tRepeatRun, NULL, (void *)RepeatRun, NULL);
-	log("启动 RepeatRun 线程完毕 \n");
-	sleep(1);
-	usleep(300000); //edit by liuqing 20180917 300ms
+	//pthread_create(&tRepeatRun, NULL, (void *)RepeatRun, NULL);
+	// log("启动 RepeatRun 线程完毕 \n");
+	// sleep(1);
 
 	/*	休眠10秒，确保其他初始化已经完成，最后打开监听端口  2006-11-12 14:34:41	*/
-	sleep(5);
+	sleep(2);
 
 #ifdef DEBUG_NETWORK
 	log("打开宏 DEBUG_NETWORK 调试状态\n");
@@ -235,7 +245,7 @@ int main(int argc, char **argv)
 	while (1)
 	{
 		//usleep(GAME_HEART_BEAT); //休息20微秒
-		sleep(100);
+		sleep(255);
 	} //while
 
 	return 0;

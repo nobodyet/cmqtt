@@ -29,6 +29,6 @@
 #include "globle.h"
 
 #define CONFIG_FILE "main.config"
-#define MAX_LISTEN_CONNECT 64 // 最大同时连接请求数  2009-7-23 由512 修改为 64，该数值过大导致系统开销
+//#define MAX_LISTEN_CONNECT 64 // 最大同时连接请求数  2009-7-23 由512 修改为 64，该数值过大导致系统开销
 
 #endif /*MAIN_H_*/

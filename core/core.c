@@ -22,8 +22,16 @@ int db_init(MYSQL *db)
 {
   int ret;
 
-  MYSQL *_db = db;
-  ret = mysqlConnetInit(_db) ? 1 : 0;
+  if (db)
+  {
+    MYSQL *_db = db;
+    ret = mysqlConnetInit(_db) ? 1 : 0;
+  }
+  else
+  {
+    elog("MYSQL.var is NULL \n  ");
+    exit(0);
+  }
 
   return ret;
 }

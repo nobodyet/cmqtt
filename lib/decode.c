@@ -27,18 +27,10 @@ static struct timeval TU_tv1;
 static struct timeval TU_tv2;
 #endif
 
-#define DISCONN_CHECK 1
-#define DISCONNED 2
-
-//edit by liuqing 20171215 新加超时锁 避免傻等
-//#define DEBUG_HALL_COND	1
 unsigned int t_hall_running = 0; //用于判断是否在工作中 避免重复唤醒工作线程
-unsigned int t_hall_count = 0;	 //用于计数 看收到了多少条消息 超过了一定条数 才唤醒工作线程
+
 pthread_cond_t t_cond_hall;
 pthread_mutex_t t_mutex_hall;
-
-pthread_cond_t t_cond_sendmsg;
-pthread_mutex_t t_mutex_sendmsg;
 /******************************************************************
  *	Function Name:	RepeatRun
  *	Arguments:
@@ -53,7 +45,7 @@ void RepeatRun(void)
 	while (1)
 	{
 		sleep(1);
-		core_repeat_1s(timeGloble_g);
+		//core_repeat_1s(timeGloble_g);
 	}
 }
 
@@ -72,38 +64,31 @@ void Hall(void)
 	MYSQL mysqlHallConn;
 	MYSQL *mysqlHall = NULL;
 
-	//2017/10/13
-	MYSQL mysqlADDConn;
-	MYSQL *mysqlADD = NULL;
-
-	log("This is in Hall decode! pid=%d  tid=%ld  lwpid=%lu\n", getpid(), pthread_self(), syscall(SYS_gettid));
-
 	//edit by liuqing 20171215 新加超时锁 避免傻等
 	int timeout_ms = 10; //暂定无事可做时延迟10ms吧
 	struct timespec abstime;
 	struct timeval now;
 	int ret_cond = 0;
-	//
 	int doTimes = 0;
 	int lastHeartTime = 0;
 
-	//edit by liuqing 20171215 新加超时锁 避免傻等
+	log("This is in Hall decode! pid=%d  tid=%ld  lwpid=%lu\n", getpid(), pthread_self(), syscall(SYS_gettid));
+
+	// 新加超时锁 避免傻等
 	pthread_cond_init(&t_cond_hall, NULL);
 	pthread_mutex_init(&t_mutex_hall, NULL);
-	//
-	pthread_cond_init(&t_cond_sendmsg, NULL);
-	pthread_mutex_init(&t_mutex_sendmsg, NULL);
 
 	mysqlHall = &mysqlHallConn;
-	mysqlADD = &mysqlADDConn;
 
-	assert(0 == db_init(mysqlHall)); //comment by bull 2017/2/6
-	assert(0 == core_init());		 //edit by liuqing 20180920 这里面是执行的脚本初始化 在此之前 需要全局的时间变量被赋值了
-	sleep(2);						 //edit by liuqing 20180917 fc_init 里 RecvMsg线程在连接成功时sleep 2s. 这里不能比那个还提前
+	assert(0 == db_init(mysqlHall));
+	assert(0 == core_init());
+	sleep(2);
 	log("Hall thread start decode msg. now:%ld\n", time(NULL));
 
 	while (1)
 	{
+		// 10ms Once
+		usleep(GAME_HEART_BEAT);
 		nowTime = timeGloble_g;
 
 #ifdef TIME_USE
@@ -139,10 +124,6 @@ void Hall(void)
 		{
 			lastHeartTime = nowTime;
 			core_heart_1s(nowTime);
-#ifdef DEBUG_HALL_COND
-			printf("LQTEST: Hall do_core\n");
-			fflush(stdout);
-#endif
 		}
 
 #ifdef TIME_USE
@@ -157,49 +138,8 @@ void Hall(void)
 			log("2.TIME USED: %ld us, AVG: %ld us", TU_tmp, TU_sum2 / TU_cnt2);
 			log("3.SUM TIME USED AVG: %ld us", (TU_sum1 + TU_sum2) / (TU_cnt2));
 		}
-
 		TU_itr++;
 #endif
-		if (doTimes > 0)
-		{ //有数据要处理 就继续处理吧
-			t_hall_running = 1;
-#ifdef DEBUG_HALL_COND
-			printf("LQTEST: Hall working t_hall_count=%d doTimes=%d\n", t_hall_count, doTimes);
-			fflush(stdout);
-#endif
-		}
-		else
-		{
-			//edit by liuqing 20171215 不傻等了 修改为使用超时锁机制
-			t_hall_running = 0;
-			__sync_lock_release(&t_hall_count); //置t_sendmsg_count=0
-			//
-			gettimeofday(&now, NULL);
-			int nsec = now.tv_usec * 1000 + (timeout_ms % 1000) * 1000000;
-			abstime.tv_nsec = nsec % 1000000000;
-			abstime.tv_sec = now.tv_sec + nsec / 1000000000 + timeout_ms / 1000;
-			pthread_mutex_lock(&t_mutex_hall);
-			//
-			ret_cond = pthread_cond_timedwait(&t_cond_hall, &t_mutex_hall, &abstime);
-			//
-			pthread_mutex_unlock(&t_mutex_hall);
-			if (ETIMEDOUT != ret_cond)
-			{
-				t_hall_running = 1; //避免被重复唤醒
-#ifdef DEBUG_HALL_COND
-				printf("LQTEST: Hall wakeup t_hall_count=%d\n", t_hall_count);
-				fflush(stdout);
-#endif
-			}
-			else
-			{
-#ifdef DEBUG_HALL_COND
-				printf("LQTEST: Hall ETIMEDOUT\n");
-				fflush(stdout);
-#endif
-			}
-		}
-		//usleep(100);
 
 	} // while
 
@@ -235,8 +175,8 @@ void pthTime(void)
 
 	while (1)
 	{
-		//edit by liuqing 20181201 调整精度 从原来的1s调整到0.2s
-		usleep(200000);
+		//edit by liuqing 20181201 调整精度 从原来的1s调整到0.3s
+		usleep(300000);
 		gettimeofday(&tv, NULL);
 		timeGloble_g = tv.tv_sec;
 	}

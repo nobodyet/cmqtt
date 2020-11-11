@@ -6,15 +6,14 @@
 
 #include "data.h"
 
-extern int CHECK_ALIVE_TIME;  //=             600;            //通知客户端定期汇报点击等用户信息的间隔时长 秒 数据类型=整型
-extern int HALL_REFRESH_TIME; //=             600;            //#定期更新（配置文件信息，平台下载信息，回写服务器负载信息，重新分配WEB服衿鳎┑氖奔浼涓?单位 秒 数据类型=整型
-extern int LOGINED_LIFE;      //=             100;            //用户登录后多长时间无消息，断掉连接
-extern int CONNECT_LIFE;      //=             5;                      //连接以后不发数据而不会被服务器关闭连接的最大时间 CONNECT_LIFE*2
+extern char MQTT_CLIENTID_g[256]; //MQTT.clientID
+extern char MQTT_USERNAME_g[256]; //"MQTT_SVR_USER";
+extern char MQTT_PWD_g[256];      // "MQTT_SVR_PWD";
+extern char MQTT_ADDRESS_g[256];  //"tcp://mqtt.eclipse.org:1883";
+extern int MQTT_KEEPALIVE_g;      //KEEPALIVE TIME
 
-extern int CONFIG_REFRESH; //=             60;         //相关配置文件定期更新间隔
-extern int MAX_SOCK_LIFE;
-
-extern int timeGloble_g; //时间计数器 每秒一次
+extern int GAME_HEART_BEAT; //心跳时间,默认微妙 1s=1000000ns
+extern int timeGloble_g;    //时间计数器 每秒一次
 
 extern char MYSQL_SERVERIP[32];
 extern char MYSQL_USERID[32];
