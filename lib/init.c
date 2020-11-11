@@ -114,9 +114,9 @@ int initRecordLogin(FILE **logfile, char *fileDir)
 int getInternetIP(char *localIP, int ethIndex)
 {
 
-  strcpy(localIP,"127.0.0.1");
-  ethIndex = 1;
-  /***
+	strcpy(localIP, "127.0.0.1");
+	ethIndex = 1;
+	/***
 	register int fd, intrface;
 	struct ifreq buf[MAXINTERFACES];
 	struct ifconf ifc;

@@ -12,10 +12,6 @@
 
 #include "debug.h"
 
-//消息错误返回码
-#define SUCCESS 0
-#define FAILURE 1
-
 //网卡的定义
 #define ETH2 2
 #define ETH1 1

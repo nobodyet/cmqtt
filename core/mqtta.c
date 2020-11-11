@@ -36,7 +36,8 @@ void myReconnctMQTT(void *contxt)
     int rc;
     int count = 100;
 
-    conn_opts->keepAliveInterval = MQTT_KEEPALIVE_g;;
+    conn_opts->keepAliveInterval = MQTT_KEEPALIVE_g;
+    ;
     conn_opts->cleansession = 1;
 
     do
@@ -44,7 +45,7 @@ void myReconnctMQTT(void *contxt)
         /* code */
         sleep(3);
         rc = MQTTAsync_connect(client, conn_opts);
-        printf(" ret=%d Reconncting MQTT.Server \n",rc );
+        printf(" ret=%d Reconncting MQTT.Server \n", rc);
 
     } while ((rc != MQTTASYNC_SUCCESS) && (count--));
 }
@@ -169,7 +170,7 @@ int init_mqtt_client()
     conn_opts->context = client;
 
     //注意是指针赋值 , 小心一点
-    conn_opts->username =  MQTT_USERNAME_g;
+    conn_opts->username = MQTT_USERNAME_g;
     conn_opts->password = MQTT_PWD_g;
 
     if ((rc = MQTTAsync_connect(client, conn_opts)) != MQTTASYNC_SUCCESS)

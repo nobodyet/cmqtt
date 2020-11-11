@@ -25,11 +25,6 @@
 #include <arpa/inet.h>
 #include <mysql/mysql.h>
 
-#define GAME_HEART_BEAT 10000 //10ms
-
-#define FALSE 0
-#define TRUE 1
-
 // add by yellowbug
 #define xptr(p, o, t) (*((t *)((p) + (o))))
 #define ptr(p, o, t) ((t *)((p) + (o)))

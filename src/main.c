@@ -135,7 +135,6 @@ int main(int argc, char **argv)
 		log("不 支持指定配置文件目录方式启动 %s /home/dizhu\n ", argv[0]);
 	}
 
-
 	/* 获取当前进程的文件数目上限 */
 	{
 		struct rlimit rt;
@@ -207,28 +206,28 @@ int main(int argc, char **argv)
 
 	//------ 2006-11-12 16:48:24 Above: 关键数据初始化  ------------
 	/*心跳计数线程启动  2006-11-2 17:35:30      */
-  {
-    pthread_t tpthTime;
-	pthread_create(&tpthTime, NULL, (void *)pthTime, NULL); //edit by liuqing 20180920 这里有usleep 100ms
-	log("启动 pthTime 心跳计数 线程 每秒一次完毕\n");
-	//sleep(1);
-	usleep(300000); //edit by liuqing 20180917 300ms
-  }
+	{
+		pthread_t tpthTime;
+		pthread_create(&tpthTime, NULL, (void *)pthTime, NULL); //edit by liuqing 20180920 这里有usleep 100ms
+		log("启动 pthTime 心跳计数 线程 每秒一次完毕\n");
+		//sleep(1);
+		usleep(300000); //edit by liuqing 20180917 300ms
+	}
 
-  {
-    pthread_t tHall;
-	/*服务线程启动  2006-11-2 17:35:30	*/
-	pthread_create(&tHall, NULL, (void *)Hall, NULL);
-	log("启动 Hall 线程完毕 \n");
-	sleep(1);
-  }
+	{
+		pthread_t tHall;
+		/*服务线程启动  2006-11-2 17:35:30	*/
+		pthread_create(&tHall, NULL, (void *)Hall, NULL);
+		log("启动 Hall 线程完毕 \n");
+		sleep(1);
+	}
 	//edit by liuqing 20180920 这个线程没用 先屏蔽掉
-  //{
-  //pthread_t tRepeatRun;
+	//{
+	//pthread_t tRepeatRun;
 	//pthread_create(&tRepeatRun, NULL, (void *)RepeatRun, NULL);
 	// log("启动 RepeatRun 线程完毕 \n");
 	// sleep(1);
-  //}
+	//}
 
 	/*	休眠10秒，确保其他初始化已经完成，最后打开监听端口  2006-11-12 14:34:41	*/
 	sleep(2);
