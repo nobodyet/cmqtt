@@ -44,7 +44,7 @@ int db_init(MYSQL *db)
  *	Editor:			bighead
  *	Description:	程序启动时刻,调用该初始化函数仅 一次,该函数不允许重复调用
  ******************************************************************/
-int core_init()
+int core_init( void )
 {
   int ret = 0;
 
@@ -59,7 +59,7 @@ int core_init()
  *	Editor:			bighead
  *	Description:  每次主线程心跳调用, 约200ms一次, 可以调整频率在decode.c
  ******************************************************************/
-int core_heart()
+int core_heart( unsigned int nowTime)
 {
   int ret = 0;
 
@@ -75,7 +75,7 @@ int core_heart()
  *	Description:	每次主线程心跳调用, 约1s一次,不超过2s, 在core_heart心跳函数之后调用
  *               可以调整频率在decode.c
  ******************************************************************/
-int core_heart_1s()
+int core_heart_1s( unsigned int nowTime)
 {
   int ret = 0;
 

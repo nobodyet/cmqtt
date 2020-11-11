@@ -60,17 +60,12 @@ void RepeatRun(void)
 void Hall(void)
 {
 	//CMDPROC proc = NULL;
-	int nowTime;
+	unsigned int nowTime;
 	MYSQL mysqlHallConn;
 	MYSQL *mysqlHall = NULL;
 
-	//edit by liuqing 20171215 新加超时锁 避免傻等
-	int timeout_ms = 10; //暂定无事可做时延迟10ms吧
-	struct timespec abstime;
-	struct timeval now;
-	int ret_cond = 0;
 	int doTimes = 0;
-	int lastHeartTime = 0;
+	unsigned int lastHeartTime = 0;
 
 	log("This is in Hall decode! pid=%d  tid=%ld  lwpid=%lu\n", getpid(), pthread_self(), syscall(SYS_gettid));
 

@@ -17,9 +17,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "MQTTAsync.h"
+#include "../mqttlib/MQTTAsync.h"
 
-#include "../include/globe.h"
+#include "../include/globle.h"
 #include <unistd.h>
 
 #if defined(_WRS_KERNEL)
@@ -31,21 +31,22 @@ static MQTTAsync_connectOptions client_conn_opts = MQTTAsync_connectOptions_init
 
 void myReconnctMQTT(void *contxt)
 {
-    MQTTAsync client = (MQTTAsync)context;
+    MQTTAsync client = (MQTTAsync)client_context;
     MQTTAsync_connectOptions *conn_opts = &client_conn_opts;
     int rc;
-    int cout = 0;
-    conn_opts.keepAliveInterval = CHECK_ALIVE_TIME;
-    conn_opts.cleansession = 1;
+    int count = 100;
+
+    conn_opts->keepAliveInterval = MQTT_KEEPALIVE_g;;
+    conn_opts->cleansession = 1;
 
     do
     {
         /* code */
         sleep(3);
-        rc = MQTTAsync_connect(client, &conn_opts);
-        printf("%s Reconncting MQTT.Server \n");
+        rc = MQTTAsync_connect(client, conn_opts);
+        printf(" ret=%d Reconncting MQTT.Server \n",rc );
 
-    } while ((rc != MQTTASYNC_SUCCESS)) && (count--);
+    } while ((rc != MQTTASYNC_SUCCESS) && (count--));
 }
 
 void connlost(void *context, char *cause)
@@ -148,7 +149,7 @@ int init_mqtt_client()
     MQTTAsync_connectOptions *conn_opts = &client_conn_opts;
     int rc;
 
-    if ((rc = MQTTAsync_create(&client_context, MQTT_ADDRESS_g, MQTT_CLIENTID_g, MQTTCLIENT_PERSISTENCE_NONE, NULL)) != MQTTASYNC_SUCCESS)
+    if ((rc = MQTTAsync_create(&client_context, MQTT_SVR_IP_g, MQTT_CLIENTID_g, MQTTCLIENT_PERSISTENCE_NONE, NULL)) != MQTTASYNC_SUCCESS)
     {
         printf("Failed to create client object, return code %d\n", rc);
         exit(EXIT_FAILURE);
@@ -167,8 +168,9 @@ int init_mqtt_client()
     conn_opts->onFailure = onConnectFailure;
     conn_opts->context = client;
 
-    strcpy(conn_opts->username, MQTT_USERNAME_g);
-    strcpy(conn_opts->password, MQTT_PWD_g);
+    //注意是指针赋值 , 小心一点
+    conn_opts->username =  MQTT_USERNAME_g;
+    conn_opts->password = MQTT_PWD_g;
 
     if ((rc = MQTTAsync_connect(client, conn_opts)) != MQTTASYNC_SUCCESS)
     {

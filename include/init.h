@@ -12,7 +12,7 @@
 * 					ip 转换为 int 存储，方便比较
 * 					注意 数值最大长度为 MAX_IPLIST_NUM = 256
 ******************************************************************/
-int getIPlist(int IPlist[MAX_IPLIST_NUM], int *num, char *ipFile);
+//int getIPlist(int IPlist[MAX_IPLIST_NUM], int *num, char *ipFile);
 
 /******************************************************************
 *	Function Name:	checkIP
@@ -22,7 +22,7 @@ int getIPlist(int IPlist[MAX_IPLIST_NUM], int *num, char *ipFile);
 *	Description:	检查ip是否在白名单中，成功返回 True=1，失败返回False=0
 * 					如果  _IPnum = 0，返回 True
 ******************************************************************/
-int checkIP(int _ip, int _IPlist[MAX_IPLIST_NUM], int _IPnum);
+//int checkIP(int _ip, int _IPlist[MAX_IPLIST_NUM], int _IPnum);
 
 /******************************************************************
 *	Function Name:	initRecordLogin
@@ -40,7 +40,7 @@ int initRecordLogin(FILE **logfile, char *fileDir);
 *	Date: 			2006-8-17
 *	Description:	获取本机外网IP，eth0 = 0 eth1 =1
 ******************************************************************/
-int getInternetIP(char *localIP, int ethIndex);
+//int getInternetIP(char *localIP, int ethIndex);
 
 /*
  * char* GetInitKey(FileName, Section, Key)

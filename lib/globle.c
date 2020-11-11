@@ -7,7 +7,7 @@ char MQTT_SVR_IP_g[256] = "tcp://spare.yuanwe.net:8081"; //"tcp://mqtt.eclipse.o
 int MQTT_KEEPALIVE_g = 45;                               //KEEPALIVE TIME
 
 //#define       MAX_SOCK_LIFE           15
-int timeGloble_g = 0;          //全局时间计数器，整型，每秒跳到一次
+unsigned int timeGloble_g = 0;          //全局时间计数器，整型，每秒跳到一次
 int GAME_HEART_BEAT_g = 10000; //默认心跳间隔,时间单位纳秒 1s=1000000ns
 
 char MYSQL_SERVERIP[32] = "localhost";

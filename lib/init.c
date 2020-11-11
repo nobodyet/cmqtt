@@ -22,6 +22,7 @@
 * 					ip 转换为 int 存储，方便比较
 * 					注意 数值最大长度为 MAX_IPLIST_NUM = 256
 ******************************************************************/
+/****
 int getIPlist(int IPlist[MAX_IPLIST_NUM],
 			  int *num,
 			  char *ipFile)
@@ -34,7 +35,7 @@ int getIPlist(int IPlist[MAX_IPLIST_NUM],
 	*num = 0;
 	return (ret);
 }
-
+***/
 /******************************************************************
 *	Function Name:	checkIP
 *	Arguments:		int, int[], int
@@ -43,7 +44,7 @@ int getIPlist(int IPlist[MAX_IPLIST_NUM],
 *	Description:	检查ip是否在白名单中，成功返回 True=1，失败返回False=0
 * 					如果  _IPnum = 0，返回 True
 ******************************************************************/
-
+/***
 int checkIP(int _ip,
 			int _IPlist[MAX_IPLIST_NUM],
 			int _IPnum)
@@ -60,12 +61,12 @@ int checkIP(int _ip,
 		} // if (_ip == _IPlist[i])
 	}	  //for (i = 0; i < _IPnum; ++i)
 
-	/*	如果白名单为空，默认允许所有连接请求  2007-6-2 下午02:58:24	*/
+  //如果白名单为空，默认允许所有连接请求  2007-6-2 下午02:58:24	
 	ret = _IPnum ? ret : 1;
 
 	return (ret);
 }
-
+*****/
 /******************************************************************
 *	Function Name:	initRecordLogin
 *	Arguments:		FILE	*logfile,char	*fileDir
