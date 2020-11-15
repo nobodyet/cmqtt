@@ -48,6 +48,8 @@ int core_init( void )
 {
   int ret = 0;
 
+  // init mqtt.client
+  init_mqtt_client();
   return ret;
 }
 

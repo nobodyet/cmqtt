@@ -83,7 +83,7 @@ void Hall(void)
 	while (1)
 	{
 		// 10ms Once
-		usleep(GAME_HEART_BEAT);
+		usleep(GAME_HEART_BEAT_g);
 		nowTime = timeGloble_g;
 
 #ifdef TIME_USE

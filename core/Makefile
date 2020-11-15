@@ -7,7 +7,7 @@ CFLAGS = -O2 -g -Wall -W -Wpointer-arith -c
 MYFLAGS=
 
 # [待完善] 确定这四个lib用不上了 就把源码干掉
-OBJS = core.o db.o  monitor.o  # sync.o lordsdk.o record.o LibMd5.o
+OBJS = core.o  mqtta.o  # sync.o lordsdk.o record.o LibMd5.o
 
 #定义最后生成的静态库文件
 LIB_A=core.a
@@ -24,11 +24,9 @@ $(LIB_A):$(OBJS)
 core.o: core.h core.c
 	$(CC) $(MYFLAGS) $(CFLAGS) core.c
 
-db.o: db.h db.c
-	$(CC) $(CFLAGS) db.c
 
-monitor.o: monitor.h monitor.c
-	$(CC) $(CFLAGS) monitor.c
+mqtta.o: mqtta.h mqtta.c
+	$(CC) $(CFLAGS) mqtta.c
 
 clean:
 	rm -rf $(OBJS) $(LIB_A)
