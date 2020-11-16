@@ -7,7 +7,7 @@
  ** Version: 	2006-11-1
  ** File Description:[下午03:34:30 2007-5-31 2007]
  ******************************************************************/
-#include "../include/main.h"
+#include "main.h"
 
 //edit by liuqing 20171128 新加文件锁 避免同一个名称的进程启动多个实例
 //http://blog.chinaunix.net/xmlrpc.php?r=blog/article&uid=29547110&id=5752998

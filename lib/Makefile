@@ -4,13 +4,13 @@ CC = gcc
 
 INC_PATH = ../include
 
-CFLAGS = -O2 -lrt -g -Wall -W -Wpointer-arith -Wstrict-prototypes -c
+CFLAGS = -Os -lrt -g -Wall -W -Wpointer-arith -Wstrict-prototypes -c
 
 OBJS = decode.o globle.o mysql.sdk.o init.o 
 
 
 #定义最后生成的静态库文件
-LIB_A=lib.a
+LIB_A=libcommon.a
 AR= ar rcu
 RANLIB= ranlib
 
@@ -21,12 +21,20 @@ all: $(LIB_A)
 $(LIB_A):$(OBJS)
 	$(AR) $@ $(OBJS)
 	$(RANLIB) $@
+	@echo -e "\\033[32m $(LIB_A) is OK \\033[0m"
 
 decode.o: decode.c $(INC_PATH)/decode.h
-	$(CC) $(CFLAGS) decode.c
+	@$(CC) $(CFLAGS) decode.c
 
 globle.o: globle.c $(INC_PATH)/globle.h
-	$(CC) $(CFLAGS) globle.c
+	@$(CC) $(CFLAGS) globle.c
+
+mysql.sdk.o:mysql.sdk.c
+		@$(CC) $(CFLAGS) $<
+
+init.o:init.c
+	@$(CC) $(CFLAGS) $<
+
 
 clean: cleanall
 

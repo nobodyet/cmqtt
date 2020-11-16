@@ -67,23 +67,22 @@ MQTTLIB_AS = paho-mqtt3as
 MQTTLIB_C_TARGET = ${MQTTLIB_C}.so
 MQTTLIB_A_TARGET = ${MQTTLIB_A}.so
 
-CC ?= gcc
+CC = gcc
 
-CCFLAGS_SO += -Wno-deprecated-declarations -DOSX -I /usr/local/opt/openssl/include
-LDFLAGS_C += -Wl,-install_name,lib$(MQTTLIB_C).so.${MAJOR_VERSION}
-LDFLAGS_CS += -Wl,-install_name,lib$(MQTTLIB_CS).so.${MAJOR_VERSION} -L /usr/local/opt/openssl/lib
-
-LDFLAGS_A += -Wl,-install_name,lib${MQTTLIB_A}.so.${MAJOR_VERSION}
-LDFLAGS_AS += -Wl,-install_name,lib${MQTTLIB_AS}.so.${MAJOR_VERSION} -L /usr/local/opt/openssl/lib
-
-
-CCFLAGS_SO = -fPIC $(CFLAGS) -D_GNU_SOURCE -Os -Wall -fvisibility=hidden -DPAHO_MQTT_EXPORTS=1
+CCFLAGS_SO = -fPIC $(CFLAGS) -D_GNU_SOURCE -Os -Wall  -DPAHO_MQTT_EXPORTS=1
+#CCFLAGS_SO = -fPIC $(CFLAGS) -D_GNU_SOURCE -Os -Wall -fvisibility=hidden -DPAHO_MQTT_EXPORTS=1
 
 FLAGS_EXE = $(LDFLAGS) -I ${srcdir} ${START_GROUP} -lpthread ${GAI_LIB} ${END_GROUP} -L ${blddir}
 FLAGS_EXES = $(LDFLAGS) -I ${srcdir} ${START_GROUP} -lpthread ${GAI_LIB} -lssl -lcrypto ${END_GROUP} -L ${blddir}
 
-LDCONFIG ?= /sbin/ldconfig
-LDFLAGS_C = $(LDFLAGS) -shared  -lpthread  -Wl
+
+MQTTCLIENT_INIT = MQTTClient_init
+MQTTASYNC_INIT = MQTTAsync_init
+START_GROUP = -Wl,--start-group
+END_GROUP = -Wl,--end-grou
+
+
+LDFLAGS_C = $(LDFLAGS) -shared  -lpthread  -Wl,-init
 LDFLAGS_CS = $(LDFLAGS) -shared $(START_GROUP) -lpthread $(GAI_LIB) $(EXTRA_LIB) -lssl -lcrypto $(END_GROUP) -Wl,-init
 LDFLAGS_A = $(LDFLAGS) -shared -Wl,-init,$(MQTTASYNC_INIT) $(START_GROUP) -lpthread $(GAI_LIB) $(END_GROUP)
 LDFLAGS_AS = $(LDFLAGS) -shared $(START_GROUP) -lpthread $(GAI_LIB) $(EXTRA_LIB) -lssl -lcrypto $(END_GROUP) -Wl,-init
@@ -92,19 +91,20 @@ ifeq ($(OSTYPE),Darwin)
 ${MQTTLIB_A_TARGET}: ${SOURCE_FILES_C} ${HEADERS_C} VersionInfo.h
 ##cc -g -fPIC  -D_GNU_SOURCE -Os -Wall -fvisibility=hidden   -DPAHO_MQTT_EXPORTS=1 -Wno-deprecated-declarations -DOSX  -o libpaho-mqtt3a.so.1.3 Base64.c Clients.c Heap.c LinkedList.c Log.c MQTTAsync.c MQTTPacket.c MQTTPacketOut.c MQTTPersistence.c MQTTPersistenceDefault.c MQTTProperties.c MQTTProtocolClient.c MQTTProtocolOut.c MQTTReasonCodes.c MQTTTime.c Messages.c OsWrapper.c SHA1.c Socket.c SocketBuffer.c StackTrace.c Thread.c Tree.c WebSocket.c utf-8.c  -shared -Wl,-init,_MQTTAsync_init  -lpthread   -Wl,-install_name,libpaho-mqtt3a.so.1
 # cc -g -fPIC  -D_GNU_SOURCE -Os -Wall -fvisibility=hidden   -DPAHO_MQTT_EXPORTS=1 -Wno-deprecated-declarations -DOSX  -o libpaho-mqtt3a.so.1.3 Base64.c Clients.c Heap.c LinkedList.c Log.c MQTTAsync.c MQTTPacket.c MQTTPacketOut.c MQTTPersistence.c MQTTPersistenceDefault.c MQTTProperties.c MQTTProtocolClient.c MQTTProtocolOut.c MQTTReasonCodes.c MQTTTime.c Messages.c OsWrapper.c SHA1.c Socket.c SocketBuffer.c StackTrace.c Thread.c Tree.c WebSocket.c utf-8.c  -shared -Wl,-init,_MQTTAsync_init  -lpthread
-	#${CC} ${CCFLAGS_SO} -o $@ ${SOURCE_FILES_C} ${LDFLAGS_C}
-	$(CC) -fPIC  -D_GNU_SOURCE -Os -Wall -fvisibility=hidden   -DPAHO_MQTT_EXPORTS=1 -Wno-deprecated-declarations -DOSX  -o $@ Base64.c Clients.c Heap.c LinkedList.c Log.c MQTTAsync.c MQTTPacket.c MQTTPacketOut.c MQTTPersistence.c MQTTPersistenceDefault.c MQTTProperties.c MQTTProtocolClient.c MQTTProtocolOut.c MQTTReasonCodes.c MQTTTime.c Messages.c OsWrapper.c SHA1.c Socket.c SocketBuffer.c StackTrace.c Thread.c Tree.c WebSocket.c utf-8.c  -shared -Wl,-init,_MQTTAsync_init  -lpthread
+	#${CC} ${CCFLAGS_SO} -o $@ ${SOURCE_FILES_C} ${LDFLAGS_A}
+	@$(CC) -fPIC  -D_GNU_SOURCE -Os -Wall -fvisibility=hidden   -DPAHO_MQTT_EXPORTS=1 -Wno-deprecated-declarations -DOSX  -o $@ Base64.c Clients.c Heap.c LinkedList.c Log.c MQTTAsync.c MQTTPacket.c MQTTPacketOut.c MQTTPersistence.c MQTTPersistenceDefault.c MQTTProperties.c MQTTProtocolClient.c MQTTProtocolOut.c MQTTReasonCodes.c MQTTTime.c Messages.c OsWrapper.c SHA1.c Socket.c SocketBuffer.c StackTrace.c Thread.c Tree.c WebSocket.c utf-8.c  -shared -Wl,-init,_MQTTAsync_init  -lpthread
 	-ln -s $(MQTTLIB_A).so lib$(MQTTLIB_A).so
 	-ln -s $(MQTTLIB_A).so lib$(MQTTLIB_A).so.${VERSION}  
 	-ln -s $(MQTTLIB_A).so lib$(MQTTLIB_A).so.${MAJOR_VERSION} 
-
-else ifeq ($(OSTYPE),Linux))
+	@echo -e "\\033[32m $@ for Macos  is OK \\033[0m"
+else ifeq ($(OSTYPE),Linux)
 ${MQTTLIB_A_TARGET}: ${SOURCE_FILES_C} ${HEADERS_C} VersionInfo.h
-	${CC} ${CCFLAGS_SO} -o $@ ${SOURCE_FILES_C} ${LDFLAGS_C}
-
+	@${CC} ${CCFLAGS_SO} -o $@ ${SOURCE_FILES_C} ${LDFLAGS_A}
 	-ln -s $(MQTTLIB_A).so lib$(MQTTLIB_A).so.${VERSION}  
 	-ln -s $(MQTTLIB_A).so lib$(MQTTLIB_A).so.${MAJOR_VERSION} 
 	-ln -s $(MQTTLIB_A).so lib$(MQTTLIB_A).so 
+	@echo -e "\\033[32m ${CC} ${CCFLAGS_SO} -o $@ ${LDFLAGS_A} \\033[0m"
+	@echo -e "\\033[32m $@ for Linux  is OK \\033[0m"
 endif
 
 clean:

@@ -7,7 +7,6 @@
 
 #include "status.h"
 #include "globle.h"
-#include "main.h"
 #include "init.h"
 
 // #include "cmd.init.h"

@@ -1,11 +1,11 @@
 .PHONY: all clean cleanall
 
 CC = gcc
-#CFLAGS = -O2 -g -Wall -W -Wpointer-arith -Wstrict-prototypes -c
-CFLAGS = -fPIC -O2 -g -Wall -W -Wpointer-arith -DPAHO_MQTT_EXPORTS=1 -c
-#SFLAGS = -fPIC -O2 -g -Wall -W -Wpointer-arith -shared -o
-SFLAGS = -fPIC -O2 -g -Wall -W -Wpointer-arith -shared -D_GNU_SOURCE -fvisibility=hidden   -DPAHO_MQTT_EXPORTS=1 -Wno-deprecated-declarations -DOSX -o
-MYFLAGS= -I../mqttlib
+#CFLAGS = -Os -g -Wall -W -Wpointer-arith -Wstrict-prototypes -c
+CFLAGS =  -Os -g -Wall -W -Wpointer-arith -DPAHO_MQTT_EXPORTS=1 -c
+#SFLAGS = -fPIC -Os -g -Wall -W -Wpointer-arith -shared -o
+SFLAGS = -fPIC -Os -g -Wall -W -Wpointer-arith -shared -D_GNU_SOURCE    -DPAHO_MQTT_EXPORTS=1  -o
+MYFLAGS= 
 
 # [待完善] 确定这四个lib用不上了 就把源码干掉
 OBJS = core.o  mqtta.o  # sync.o lordsdk.o record.o LibMd5.o
@@ -23,29 +23,26 @@ RANLIB= ranlib
 
 all: $(LIB_A) $(LIB_SO)
 
-#生成静态库 libtest.a
-	#$(STATIC_TARGET):$(OBJS) 
-    #  ar cru $(STATIC_TARGET) $(OBJS) 
-    #  ranlib $(STATIC_TARGET)
-
-#生成动态库 libtest.so
-	#$(SHARE_TARGET):$(OBJS)
-    #  $(CXX) -shared -fPIC -o $(SHARE_TARGET) $(SOURCE)
 
 #生成 lib.a 方便外面引用
 $(LIB_A):$(OBJS)
 	$(AR) $@ $(OBJS)
 	$(RANLIB) $@
+	@echo -e "\\033[32m $(LIB_A) is OK \\033[0m"
 
+# lib.so 
 $(LIB_SO):$(OBJS)
-	$(CC) $(MYFLAGS) -I$(MQTT_LIB_PATH) $(SFLAGS) $@ $^
+	$(CC) -fPIC $(CFLAGS) core.c
+	$(CC) -fPIC $(CFLAGS) mqtta.c
+	$(CC) $(MYFLAGS)  $(SFLAGS) $@ $^
+	@echo -e "\\033[32m $(LIB_SO) is OK \\033[0m"
 
 core.o: core.c core.h
-	$(CC) $(MYFLAGS) $(CFLAGS) $<
+	@$(CC) $(MYFLAGS) $(CFLAGS) $<
 
 
 mqtta.o: mqtta.c mqtta.h
-	$(CC) $(MYFLAGS) $(CFLAGS) $<
+	@$(CC) $(MYFLAGS) $(CFLAGS) $<
 
 clean:
 	-rm -rf $(OBJS) $(LIB_A) $(LIB_SO)

@@ -139,7 +139,7 @@ int my_mqqta_recvmsg(void *context, char *topicName, int topicLen, MQTTAsync_mes
 
     debug("Message arrived: topic: %s payload: %.*s\n", topicName, message->payloadlen, (char *)message->payload);
     // 解码消息,实际的业务逻辑函数
-    decode_msg(topicName, message);
+    //decode_msg(topicName, message);
 
     MQTTAsync_freeMessage(&message);
     MQTTAsync_free(topicName);
