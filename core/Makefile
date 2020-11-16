@@ -1,11 +1,10 @@
 .PHONY: all clean cleanall
 
 CC = gcc
-#CFLAGS = -Os -g -Wall -W -Wpointer-arith -Wstrict-prototypes -c
-CFLAGS =  -Os -g -Wall -W -Wpointer-arith -DPAHO_MQTT_EXPORTS=1 -c
-#SFLAGS = -fPIC -Os -g -Wall -W -Wpointer-arith -shared -o
+
+MYFLAGS=  -I../include -I../paho.mqtt.c/src/
+CFLAGS = $(MYFLAGS) -Os -g -Wall -W -Wpointer-arith -DPAHO_MQTT_EXPORTS=1 -c
 SFLAGS = -fPIC -Os -g -Wall -W -Wpointer-arith -shared -D_GNU_SOURCE    -DPAHO_MQTT_EXPORTS=1  -o
-MYFLAGS= 
 
 # [待完善] 确定这四个lib用不上了 就把源码干掉
 OBJS = core.o  mqtta.o  # sync.o lordsdk.o record.o LibMd5.o
@@ -32,7 +31,7 @@ $(LIB_A):$(OBJS)
 	@echo -e "\\033[32m $(LIB_A) is OK \\033[0m"
 
 # lib.so 
-$(LIB_SO):$(OBJS)
+$(LIB_SO):  $(wildcard *.c)
 	$(CC) -fPIC $(CFLAGS) core.c
 	$(CC) -fPIC $(CFLAGS) mqtta.c
 	$(CC) $(MYFLAGS)  $(SFLAGS) $@ $(OBJS)

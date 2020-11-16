@@ -3,8 +3,9 @@
 CC = gcc
 
 INC_PATH = ../include
+MY_CFLAGS = -I../include  -I../paho.mqtt.c/src/
 
-CFLAGS = -Os -lrt -g -Wall -W -Wpointer-arith -Wstrict-prototypes -c
+CFLAGS = $(MY_CFLAGS) -Os -lrt -g -Wall -W -Wpointer-arith -Wstrict-prototypes -c
 
 OBJS = decode.o globle.o mysql.sdk.o init.o 
 
