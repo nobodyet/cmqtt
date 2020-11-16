@@ -156,7 +156,6 @@ void pthTime(void)
 	static struct timeval tv;
 	//edit by liuqing 20170320 添加一个日志 打印该可执行文件的编译时间
 	printf("\n--------\n本次编译时间:%s %s\n--------\n\n", __DATE__, __TIME__);
-	printf("\n-----------------------------------------------------------------\n");
 	fflush(stdout);
 
 	timeGloble_g = timeBegin_g = time(NULL);

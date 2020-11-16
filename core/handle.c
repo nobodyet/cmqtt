@@ -23,7 +23,6 @@ int do_A1(char *topicName, MQTTAsync_message *recvmsg, MYSQL *_db, void *context
 
 int do_test(char *topicName, MQTTAsync_message *recvmsg, MYSQL *_db, void *context)
 {
-	debug("topicName=%s\n",topicName);
-	return 1;
+    debug("topicName=%s msg=%p db=%p context=%p\n", topicName, recvmsg, _db, context);
+    return 1;
 }
-

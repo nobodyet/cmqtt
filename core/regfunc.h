@@ -20,9 +20,9 @@
 #include "MQTTAsync.h"
 struct cmd_pro
 {
-    char topic_name[256];                                                           //频道名字
-    unsigned int cnt;                                                                 //调用次数
-    int  (*bc)(const char *topic, MQTTAsync_message *msg, MYSQL *_db, void *context); //处理函数
+    char topic_name[256];                                                            //频道名字
+    unsigned int cnt;                                                                //调用次数
+    int (*bc)(const char *topic, MQTTAsync_message *msg, MYSQL *_db, void *context); //处理函数
 };
 typedef struct cmd_pro *cmd_pro_t;
 

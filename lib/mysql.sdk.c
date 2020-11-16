@@ -24,7 +24,7 @@ int initMysqlAccount(char *dataFile)
 	//char         MYSQL_USERID[32]=                    "user";
 	//char         MYSQL_PASSWD[64]=                    "pwd";
 	//char         MYSQL_DATABASE[32]=                  "dbname";
-	char result[260]={0};
+	char result[260] = {0};
 
 	memcpy(result, GetInitKey(dataFile, "MYSQL", "SERVERIP"), 256);
 	if (strlen(result))
