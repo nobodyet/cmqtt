@@ -158,7 +158,7 @@ void pthTime(void)
 	printf("\n-----------------------------------------------------------------\n");
 	fflush(stdout);
 
-	timeGloble_g = time(NULL);
+	timeGloble_g = timeBegin_g = time(NULL);
 	srand(time(NULL) + getpid() + random() + timeGloble_g);
 	sleep(1);
 	log("在pthTime 中 初始化随机种子完毕,请勿再次初始化随机\n");

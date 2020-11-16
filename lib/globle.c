@@ -8,6 +8,7 @@ int MQTT_KEEPALIVE_g = 45;                               //KEEPALIVE TIME
 
 //#define       MAX_SOCK_LIFE           15
 unsigned int timeGloble_g = 0; //全局时间计数器，整型，每秒跳到一次
+unsigned int timeBegin_g = 0;  //启动时间
 int GAME_HEART_BEAT_g = 10000; //默认心跳间隔,时间单位纳秒 1s=1000000ns
 
 char MYSQL_SERVERIP[32] = "localhost";

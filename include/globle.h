@@ -13,6 +13,7 @@ extern int MQTT_KEEPALIVE_g;      //KEEPALIVE TIME
 
 extern int GAME_HEART_BEAT_g;     //心跳时间,默认微妙 1s=1000000ns
 extern unsigned int timeGloble_g; //时间计数器 每秒一次
+extern unsigned int timeBegin_g;  //时间计数器 每秒一次
 
 extern char MYSQL_SERVERIP[32];
 extern char MYSQL_USERID[32];

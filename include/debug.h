@@ -64,7 +64,6 @@
 	{                                                                       \
 		fprintf(stdout, "D/(%s,%d,%s) ", __FILE__, __LINE__, __FUNCTION__); \
 		fprintf(stdout, __VA_ARGS__);                                       \
-		fprintf(stdout, "\n");                                              \
 		fflush(stdout);                                                     \
 	} while (0)
 #else /*  */
@@ -78,8 +77,6 @@
 	{                                                                       \
 		fprintf(stdout, "I/(%s,%d,%s) ", __FILE__, __LINE__, __FUNCTION__); \
 		fprintf(stdout, __VA_ARGS__);                                       \
-		fprintf(stdout, "\n");                                              \
-		fflush(stdout);                                                     \
 	} while (0)
 #else /*  */
 #define log(...)
@@ -92,7 +89,6 @@
 	{                                                                       \
 		fprintf(stdout, "E/(%s,%d,%s) ", __FILE__, __LINE__, __FUNCTION__); \
 		fprintf(stdout, __VA_ARGS__);                                       \
-		fprintf(stdout, "\n");                                              \
 		fflush(stdout);                                                     \
 	} while (0)
 #else
