@@ -16,7 +16,7 @@
 * @Return: 无
 * @Date: 2019-08-26 14:54:18
 *******************************************************************************/
-static int do_A1(char *topicName, MQTTAsync_message *recvmsg, MYSQL *_db, void *context)
+int do_A1(char *topicName, MQTTAsync_message *recvmsg, MYSQL *_db, void *context)
 {
     return 1;
 }

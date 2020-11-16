@@ -14,12 +14,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../include/mysql.sdk.h"
+#include "../include/globle.h"
+#include "../include/debug.h"
 #include "MQTTAsync.h"
 struct cmd_pro
 {
-    const char *topic_name;                                                           //频道名字
+    char topic_name[256];                                                           //频道名字
     unsigned int cnt;                                                                 //调用次数
-    void (*bc)(const char *topic, MQTTAsync_message *msg, MYSQL *_db, void *context); //处理函数
+    int  (*bc)(const char *topic, MQTTAsync_message *msg, MYSQL *_db, void *context); //处理函数
 };
 typedef struct cmd_pro *cmd_pro_t;
 
