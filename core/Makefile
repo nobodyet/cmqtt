@@ -21,7 +21,8 @@ MQTT_LIB_PATH = ../mqttlib/
 AR= ar rcu
 RANLIB= ranlib
 
-all: $(LIB_A) $(LIB_SO)
+#all: $(LIB_A) $(LIB_SO)
+all:  $(LIB_SO)
 
 
 #生成 lib.a 方便外面引用
@@ -34,7 +35,7 @@ $(LIB_A):$(OBJS)
 $(LIB_SO):$(OBJS)
 	$(CC) -fPIC $(CFLAGS) core.c
 	$(CC) -fPIC $(CFLAGS) mqtta.c
-	$(CC) $(MYFLAGS)  $(SFLAGS) $@ $^
+	$(CC) $(MYFLAGS)  $(SFLAGS) $@ $(OBJS)
 	@echo -e "\\033[32m $(LIB_SO) is OK \\033[0m"
 
 core.o: core.c core.h
