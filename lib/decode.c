@@ -78,6 +78,7 @@ void Hall(void)
 	assert(0 == db_init(mysqlHall));
 	assert(0 == core_init());
 	sleep(2);
+	core_do_test();
 	log("Hall thread start decode msg. now:%ld\n", time(NULL));
 
 	while (1)

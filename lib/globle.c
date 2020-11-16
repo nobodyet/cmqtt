@@ -11,10 +11,10 @@ unsigned int timeGloble_g = 0; //全局时间计数器，整型，每秒跳到�
 unsigned int timeBegin_g = 0;  //启动时间
 int GAME_HEART_BEAT_g = 10000; //默认心跳间隔,时间单位纳秒 1s=1000000ns
 
-char MYSQL_SERVERIP[32] = "localhost";
-char MYSQL_USERID[32] = "jsb";
-char MYSQL_PASSWD[64] = "password";
-char MYSQL_DATABASE[32] = "jj";
+char MYSQL_SERVERIP[256] = "localhost";
+char MYSQL_USERID[256] = "jsb";
+char MYSQL_PASSWD[256] = "password";
+char MYSQL_DATABASE[256] = "jj";
 
 #ifdef DEBUG_DUP_RECV
 FILE *_debug_recv_file = NULL; //调试 复制接收数据到文件

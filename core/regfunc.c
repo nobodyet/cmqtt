@@ -26,6 +26,7 @@ static struct cmd_pro ctr_handle_tab[] = {{"RRS", 0, do_A1}, //远程重启终�
     {"RDC", 0, do_A1}, //远程调光控制
     {"RSC", 0, do_A1}, //远程开关控制
    {"RCN", 0, do_A1}, //删除节点
+	{"TEST",0,do_test},
 };
 
 static int ctr_table_size = sizeof(ctr_handle_tab) / sizeof(struct cmd_pro); //数组大小

@@ -15,10 +15,10 @@ extern int GAME_HEART_BEAT_g;     //心跳时间,默认微妙 1s=1000000ns
 extern unsigned int timeGloble_g; //时间计数器 每秒一次
 extern unsigned int timeBegin_g;  //时间计数器 每秒一次
 
-extern char MYSQL_SERVERIP[32];
-extern char MYSQL_USERID[32];
-extern char MYSQL_PASSWD[64];
-extern char MYSQL_DATABASE[32];
+extern char MYSQL_SERVERIP[256];
+extern char MYSQL_USERID[256];
+extern char MYSQL_PASSWD[256];
+extern char MYSQL_DATABASE[256];
 
 #ifdef DEBUG_DUP_RECV
 //调试 复制接收数据到文件

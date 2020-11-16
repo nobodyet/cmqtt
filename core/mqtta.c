@@ -112,7 +112,7 @@ void onConnectFailure(void *context, MQTTAsync_failureData *response)
 void onConnect(void *context, MQTTAsync_successData *response)
 {
 
-    printf("Successful connection\n");
+    log("Successful connection\n");
 }
 
 int my_mqqta_sendmsg(char *topicName, MQTTAsync_message *pubmsg)
@@ -217,7 +217,7 @@ int init_mqtt_client()
         exit(EXIT_FAILURE);
     }
 
-    assert(MQTTASYNC_TRUE == MQTTAsync_isConnected(client));
+    //assert(MQTTASYNC_TRUE == MQTTAsync_isConnected(client));
 
     //MQTTAsync_destroy(&client);
     return rc;

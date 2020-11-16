@@ -57,4 +57,6 @@ int core_heart_1s( unsigned int nowtime);
  ******************************************************************/
 int db_init(MYSQL *db);
 
+int core_do_test(void);
+
 #endif /* #ifndef __MOZITI_CORE_H */

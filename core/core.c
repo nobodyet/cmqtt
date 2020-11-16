@@ -84,4 +84,11 @@ int core_heart_1s( unsigned int nowTime)
   return ret;
 }
 
+int core_do_test(void)
+{
+	decode_msg_handle("TEST",NULL,NULL);
+	print_stats();
+	return 0;
+}
+
 /* END */

@@ -24,24 +24,24 @@ int initMysqlAccount(char *dataFile)
 	//char         MYSQL_USERID[32]=                    "user";
 	//char         MYSQL_PASSWD[64]=                    "pwd";
 	//char         MYSQL_DATABASE[32]=                  "dbname";
-	char result[256];
-	memcpy(result, GetInitKey(dataFile, "MYSQL", "MYSQL_SERVERIP"), 256);
+	char result[260]={0};
+
+	memcpy(result, GetInitKey(dataFile, "MYSQL", "SERVERIP"), 256);
 	if (strlen(result))
 		memcpy(MYSQL_SERVERIP, result, 256);
 
-	memcpy(result, GetInitKey(dataFile, "MYSQL", "MYSQL_USERID"), 256);
+	memcpy(result, GetInitKey(dataFile, "MYSQL", "USERID"), 256);
 	if (strlen(result))
 		memcpy(MYSQL_USERID, result, 256);
 
-	memcpy(result, GetInitKey(dataFile, "MYSQL", "MYSQL_PASSWD"), 256);
+	memcpy(result, GetInitKey(dataFile, "MYSQL", "PASSWD"), 256);
 	if (strlen(result))
 		memcpy(MYSQL_PASSWD, result, 256);
 
-	memcpy(result, GetInitKey(dataFile, "MYSQL", "MYSQL_DATABASE"), 256);
+	memcpy(result, GetInitKey(dataFile, "MYSQL", "DATABASE"), 256);
 	if (strlen(result))
 		memcpy(MYSQL_DATABASE, result, 256);
 
-	printf("hello\n");
 	return 0;
 }
 
