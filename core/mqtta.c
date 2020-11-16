@@ -14,17 +14,7 @@
  *    Ian Craggs - initial contribution
  *******************************************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "../mqttlib/MQTTAsync.h"
-
-#include "../include/globle.h"
-#include <unistd.h>
-
-#if defined(_WRS_KERNEL)
-#include <OsWrapper.h>
-#endif
+#include "mqtta.h"
 
 static void *client_context;
 static MQTTAsync_connectOptions client_conn_opts = MQTTAsync_connectOptions_initializer;
@@ -39,12 +29,13 @@ void myReconnctMQTT(void *contxt)
     conn_opts->keepAliveInterval = MQTT_KEEPALIVE_g;
     conn_opts->cleansession = 1;
 
-    do{
+    do
+    {
         /* code */
         sleep(3);
         rc = MQTTAsync_connect(client, conn_opts);
         printf(" ret=%d Reconncting MQTT.Server \n", rc);
-        -- count;
+        --count;
     } while ((rc != MQTTASYNC_SUCCESS) && (0 != count));
 }
 
@@ -85,16 +76,16 @@ void onSendFailure(void *context, MQTTAsync_failureData *response)
     }
 }
 
+void onSubscribe(void *context, MQTTAsync_successData *response)
+{
 
-void onSubscribe(void* context, MQTTAsync_successData* response){
-
-  return;
+    return;
 }
 
+void onSubscribeFailure(void *context, MQTTAsync_successData *response)
+{
 
-void onSubscribeFailure(void* context, MQTTAsync_successData* response){
-
-  return ;
+    return;
 }
 void onSend(void *context, MQTTAsync_successData *response)
 {
@@ -148,7 +139,7 @@ int my_mqqta_recvmsg(void *context, char *topicName, int topicLen, MQTTAsync_mes
 
     debug("Message arrived: topic: %s payload: %.*s\n", topicName, message->payloadlen, (char *)message->payload);
     // 解码消息,实际的业务逻辑函数
-    decode_msg(topicName,message);
+    decode_msg(topicName, message);
 
     MQTTAsync_freeMessage(&message);
     MQTTAsync_free(topicName);
@@ -156,33 +147,34 @@ int my_mqqta_recvmsg(void *context, char *topicName, int topicLen, MQTTAsync_mes
 }
 
 // 订阅topic
-int my_subsribe_topic(char * topic,int qos){
-      MQTTAsync client = (MQTTAsync) client_context;
-      MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
-      int rc;
-      printf("Subscribing to topic %s\nfor client %s using QoS%d", topic, MQTT_CLIENTID_g, qos);
-      //opts.onSuccess = onSubscribe;
-      //opts.onFailure = onSubscribeFailure;
-      opts.context = client;
-      //LIBMQTT_API int MQTTAsync_subscribe(MQTTAsync handle, const char* topic, int qos, MQTTAsync_responseOptions* response);
-      rc = MQTTAsync_subscribe(client, topic, qos, &opts);
-      return rc;
+int my_subsribe_topic(char *topic, int qos)
+{
+    MQTTAsync client = (MQTTAsync)client_context;
+    MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
+    int rc;
+    printf("Subscribing to topic %s\nfor client %s using QoS%d", topic, MQTT_CLIENTID_g, qos);
+    //opts.onSuccess = onSubscribe;
+    //opts.onFailure = onSubscribeFailure;
+    opts.context = client;
+    //LIBMQTT_API int MQTTAsync_subscribe(MQTTAsync handle, const char* topic, int qos, MQTTAsync_responseOptions* response);
+    rc = MQTTAsync_subscribe(client, topic, qos, &opts);
+    return rc;
 }
 
-int my_unsubsribe_topic(char * topic,int qos){
-      MQTTAsync client = (MQTTAsync) client_context;
-      MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
-      int rc;
-      printf("unSubscribing to topic %s\nfor client %s using QoS%d", topic, MQTT_CLIENTID_g, qos);
-      //opts.onSuccess = onUnSubscribe;
-      //opts.onFailure = onUnSubscribeFailure;
-      opts.context = client;
-      //LIBMQTT_API int MQTTAsync_unsubscribe(MQTTAsync handle, const char* topic, MQTTAsync_responseOptions* response);
-      rc = MQTTAsync_unsubscribe(client, topic, &opts);
+int my_unsubsribe_topic(char *topic, int qos)
+{
+    MQTTAsync client = (MQTTAsync)client_context;
+    MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
+    int rc;
+    printf("unSubscribing to topic %s\nfor client %s using QoS%d", topic, MQTT_CLIENTID_g, qos);
+    //opts.onSuccess = onUnSubscribe;
+    //opts.onFailure = onUnSubscribeFailure;
+    opts.context = client;
+    //LIBMQTT_API int MQTTAsync_unsubscribe(MQTTAsync handle, const char* topic, MQTTAsync_responseOptions* response);
+    rc = MQTTAsync_unsubscribe(client, topic, &opts);
 
-      return rc;
+    return rc;
 }
-
 
 int init_mqtt_client()
 {

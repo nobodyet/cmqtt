@@ -8,7 +8,7 @@ TARGET =   main.o
 
 INCLUDE_PATH = ../include
 
-LIB_PATH = ../lib
+LIB_PATH = ../lib  
 
 COPY = cp --reply=yes
 

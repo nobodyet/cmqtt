@@ -1,7 +1,6 @@
 #ifndef GLOBLE_H
 #define GLOBLE_H
 
-#include <sys/epoll.h>
 #include <mysql/mysql.h>
 
 #include "data.h"

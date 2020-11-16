@@ -16,9 +16,26 @@
 
 # Note: on OS X you should install XCode and the associated command-line tools
 
+#cc -g -fPIC  -D_GNU_SOURCE -Os -Wall -fvisibility=hidden -Ibuild -DPAHO_MQTT_EXPORTS=1 -Wno-deprecated-declarations -DOSX -I /usr/local/opt/openssl/include -o build/output/libpaho-mqtt3a.so.1.3 Base64.c Clients.c Heap.c LinkedList.c Log.c MQTTAsync.c MQTTPacket.c MQTTPacketOut.c MQTTPersistence.c MQTTPersistenceDefault.c MQTTProperties.c MQTTProtocolClient.c MQTTProtocolOut.c MQTTReasonCodes.c MQTTTime.c Messages.c OsWrapper.c SHA1.c Socket.c SocketBuffer.c StackTrace.c Thread.c Tree.c WebSocket.c utf-8.c  -shared -Wl,-init,_MQTTAsync_init  -lpthread   -Wl,-install_name,libpaho-mqtt3a.so.1
+#ln -s libpaho-mqtt3a.so.1.3  build/output/libpaho-mqtt3a.so.1
+#ln -s libpaho-mqtt3a.so.1 build/output/libpaho-mqtt3a.so
 
 SHELL = /bin/sh
 .PHONY: clean, mkdir, install, uninstall, html
+
+# determine current platform
+BUILD_TYPE ?= debug
+ifeq ($(OS),Windows_NT)
+	OSTYPE ?= $(OS)
+	MACHINETYPE ?= $(PROCESSOR_ARCHITECTURE)
+else
+	OSTYPE ?= $(shell uname -s)
+	MACHINETYPE ?= $(shell uname -m)
+	build.level = $(shell date)
+endif # OS
+ifeq ($(OSTYPE),linux)
+	OSTYPE = Linux
+endif
 
 MAJOR_VERSION = $(shell cat version.major)
 MINOR_VERSION = $(shell cat version.minor)
@@ -38,7 +55,7 @@ SOURCE_FILES_AS = $(filter-out MQTTClient.c MQTTVersion.c, $(SOURCE_FILES))
 
 HEADERS = ./*.h
 HEADERS_C = $(filter-out /MQTTAsync.h, $(HEADERS))
-HEADERS_A = $(HEADERS)
+HEADERS_A = $(filter-out /MQTTAsync.h, $(HEADERS))
 
 
 # The names of the four different libraries to be built
@@ -48,6 +65,8 @@ MQTTLIB_A = paho-mqtt3a
 MQTTLIB_AS = paho-mqtt3as
 
 MQTTLIB_C_TARGET = ${MQTTLIB_C}.so
+MQTTLIB_A_TARGET = ${MQTTLIB_A}.so
+
 CC ?= gcc
 
 CCFLAGS_SO += -Wno-deprecated-declarations -DOSX -I /usr/local/opt/openssl/include
@@ -58,7 +77,7 @@ LDFLAGS_A += -Wl,-install_name,lib${MQTTLIB_A}.so.${MAJOR_VERSION}
 LDFLAGS_AS += -Wl,-install_name,lib${MQTTLIB_AS}.so.${MAJOR_VERSION} -L /usr/local/opt/openssl/lib
 
 
-CCFLAGS_SO = -g -fPIC $(CFLAGS) -D_GNU_SOURCE -Os -Wall -fvisibility=hidden -DPAHO_MQTT_EXPORTS=1
+CCFLAGS_SO = -fPIC $(CFLAGS) -D_GNU_SOURCE -Os -Wall -fvisibility=hidden -DPAHO_MQTT_EXPORTS=1
 
 FLAGS_EXE = $(LDFLAGS) -I ${srcdir} ${START_GROUP} -lpthread ${GAI_LIB} ${END_GROUP} -L ${blddir}
 FLAGS_EXES = $(LDFLAGS) -I ${srcdir} ${START_GROUP} -lpthread ${GAI_LIB} -lssl -lcrypto ${END_GROUP} -L ${blddir}
@@ -69,13 +88,26 @@ LDFLAGS_CS = $(LDFLAGS) -shared $(START_GROUP) -lpthread $(GAI_LIB) $(EXTRA_LIB)
 LDFLAGS_A = $(LDFLAGS) -shared -Wl,-init,$(MQTTASYNC_INIT) $(START_GROUP) -lpthread $(GAI_LIB) $(END_GROUP)
 LDFLAGS_AS = $(LDFLAGS) -shared $(START_GROUP) -lpthread $(GAI_LIB) $(EXTRA_LIB) -lssl -lcrypto $(END_GROUP) -Wl,-init
 
-${MQTTLIB_C_TARGET}: ${SOURCE_FILES_C} ${HEADERS_C} VersionInfo.h
-	${CC} ${CCFLAGS_SO} -o $@ ${SOURCE_FILES_C} ${LDFLAGS_C}
-	-ln -s $(MQTTLIB_C).so lib$(MQTTLIB_C).so.${VERSION}  
-	-ln -s $(MQTTLIB_C).so lib$(MQTTLIB_C).so.${MAJOR_VERSION} 
-	-ln -s $(MQTTLIB_C).so lib$(MQTTLIB_C).so 
+ifeq ($(OSTYPE),Darwin)
+${MQTTLIB_A_TARGET}: ${SOURCE_FILES_C} ${HEADERS_C} VersionInfo.h
+##cc -g -fPIC  -D_GNU_SOURCE -Os -Wall -fvisibility=hidden   -DPAHO_MQTT_EXPORTS=1 -Wno-deprecated-declarations -DOSX  -o libpaho-mqtt3a.so.1.3 Base64.c Clients.c Heap.c LinkedList.c Log.c MQTTAsync.c MQTTPacket.c MQTTPacketOut.c MQTTPersistence.c MQTTPersistenceDefault.c MQTTProperties.c MQTTProtocolClient.c MQTTProtocolOut.c MQTTReasonCodes.c MQTTTime.c Messages.c OsWrapper.c SHA1.c Socket.c SocketBuffer.c StackTrace.c Thread.c Tree.c WebSocket.c utf-8.c  -shared -Wl,-init,_MQTTAsync_init  -lpthread   -Wl,-install_name,libpaho-mqtt3a.so.1
+# cc -g -fPIC  -D_GNU_SOURCE -Os -Wall -fvisibility=hidden   -DPAHO_MQTT_EXPORTS=1 -Wno-deprecated-declarations -DOSX  -o libpaho-mqtt3a.so.1.3 Base64.c Clients.c Heap.c LinkedList.c Log.c MQTTAsync.c MQTTPacket.c MQTTPacketOut.c MQTTPersistence.c MQTTPersistenceDefault.c MQTTProperties.c MQTTProtocolClient.c MQTTProtocolOut.c MQTTReasonCodes.c MQTTTime.c Messages.c OsWrapper.c SHA1.c Socket.c SocketBuffer.c StackTrace.c Thread.c Tree.c WebSocket.c utf-8.c  -shared -Wl,-init,_MQTTAsync_init  -lpthread
+	#${CC} ${CCFLAGS_SO} -o $@ ${SOURCE_FILES_C} ${LDFLAGS_C}
+	$(CC) -fPIC  -D_GNU_SOURCE -Os -Wall -fvisibility=hidden   -DPAHO_MQTT_EXPORTS=1 -Wno-deprecated-declarations -DOSX  -o $@ Base64.c Clients.c Heap.c LinkedList.c Log.c MQTTAsync.c MQTTPacket.c MQTTPacketOut.c MQTTPersistence.c MQTTPersistenceDefault.c MQTTProperties.c MQTTProtocolClient.c MQTTProtocolOut.c MQTTReasonCodes.c MQTTTime.c Messages.c OsWrapper.c SHA1.c Socket.c SocketBuffer.c StackTrace.c Thread.c Tree.c WebSocket.c utf-8.c  -shared -Wl,-init,_MQTTAsync_init  -lpthread
+	-ln -s $(MQTTLIB_A).so lib$(MQTTLIB_A).so
+	-ln -s $(MQTTLIB_A).so lib$(MQTTLIB_A).so.${VERSION}  
+	-ln -s $(MQTTLIB_A).so lib$(MQTTLIB_A).so.${MAJOR_VERSION} 
 
+else ifeq ($(OSTYPE),Linux))
+${MQTTLIB_A_TARGET}: ${SOURCE_FILES_C} ${HEADERS_C} VersionInfo.h
+	${CC} ${CCFLAGS_SO} -o $@ ${SOURCE_FILES_C} ${LDFLAGS_C}
+
+	-ln -s $(MQTTLIB_A).so lib$(MQTTLIB_A).so.${VERSION}  
+	-ln -s $(MQTTLIB_A).so lib$(MQTTLIB_A).so.${MAJOR_VERSION} 
+	-ln -s $(MQTTLIB_A).so lib$(MQTTLIB_A).so 
+endif
 
 clean:
-	-rm -f ${MQTTLIB_C_TARGET}
-	-rm -f lib$(MQTTLIB_C).so.${VERSION} lib$(MQTTLIB_C).so.${MAJOR_VERSION} lib$(MQTTLIB_C).so 
+	-rm -f ${MQTTLIB_A_TARGET}
+	-rm -f lib$(MQTTLIB_A).so.${VERSION} lib$(MQTTLIB_A).so.${MAJOR_VERSION} lib$(MQTTLIB_A).so 
+
