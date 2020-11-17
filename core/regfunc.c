@@ -19,17 +19,6 @@
 // };
 //  int do_A1(char *topicName, MQTTAsync_message *recvmsg, MYSQL *_db, void *context)
 
-// 消息和其对应的处理函数表格,  建议频度从高往下排
-static struct cmd_pro ctr_handle_tab[] = {
-    {"RRS123", 0, do_A1}, //远程重启终端设备系统
-    {"SFR123", 0, do_A1}, //恢复工厂设置
-    {"RS4123", 0, do_A1},  //服务器跳转
-    {"RDC123", 0, do_A1}, //远程调光控制
-    {"RSC123", 0, do_A1}, //远程开关控制
-    {"RCN123", 0, do_A1}, //删除节点
-    {"TEST12", 0, do_test},
-};
-
 static int ctr_table_size = sizeof(ctr_handle_tab) / sizeof(struct cmd_pro); //数组大小
 
 static unsigned int msgcnt = 0; //全局消息计数器
@@ -44,14 +33,14 @@ static unsigned int msgcnt = 0; //全局消息计数器
 *******************************************************************************/
 int regTopicFromTable(void)
 {
-	int idx=0;
-	for(idx=0;idx<ctr_table_size;idx++)
-		if(ctr_handle_tab[idx].bc){
-			my_subsribe_topic(ctr_handle_tab[idx].topic_name,0);
-			sleep(2);
-
-}
-	return 0;
+    int idx = 0;
+    for (idx = 0; idx < ctr_table_size; idx++)
+        if (ctr_handle_tab[idx].bc)
+        {
+            my_subsribe_topic(ctr_handle_tab[idx].topic_name, 0);
+            sleep(2);
+        }
+    return 0;
 }
 
 /********************************************************************************
@@ -79,7 +68,7 @@ int decode_msg_handle(const char *topic, MQTTAsync_message *msg, void *context)
     {
         ctr_handle_tab[idx].bc(topic, msg, _mysqlcon, context);
         ctr_handle_tab[idx].cnt++; //消息计数器 +1
-	debug("idx=%d topic=%s func=%p decode msg\n",idx,topic,ctr_handle_tab[idx].bc);
+        debug("idx=%d topic=%s func=%p decode msg\n", idx, topic, ctr_handle_tab[idx].bc);
         return 0;
     }
 
@@ -90,7 +79,7 @@ int decode_msg_handle(const char *topic, MQTTAsync_message *msg, void *context)
         {
             ctr_handle_tab[idx].bc(topic, msg, _mysqlcon, context);
             ctr_handle_tab[idx].cnt++; //消息计数器 +1
-		debug("idx=%d topic=%s func=%p decode msg\n",idx,topic,ctr_handle_tab[idx].bc);
+            debug("idx=%d topic=%s func=%p decode msg\n", idx, topic, ctr_handle_tab[idx].bc);
             break;
         }
     }

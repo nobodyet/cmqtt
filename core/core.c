@@ -50,8 +50,8 @@ int core_init(void)
 
   // init mqtt.client
   init_mqtt_client();
-  sleep (1);
-	regTopicFromTable();
+  sleep(1);
+  regTopicFromTable();
   return ret;
 }
 
@@ -86,7 +86,6 @@ int core_heart_1s(unsigned int nowTime)
   return ret;
 }
 
-
 // 初始化时候进行部分测试,可以随意添加
 int core_do_test(void)
 {
@@ -94,7 +93,6 @@ int core_do_test(void)
   print_stats();
   return 0;
 }
-
 
 // 定期调用会话统计信息, 分钟级别
 int core_stats(void)
