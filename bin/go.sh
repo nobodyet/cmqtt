@@ -9,16 +9,6 @@ if [ $# -eq 0 ] ; then
 fi
 
 svr=$1
-
-# # 新加启动程序时调用更新脚本的功能 [经证实 supervisord 并调用该脚本来启动程序]
-# auto_update_sh=~/_update_on_restart_/called_on_restart.sh
-# if [ -x ${auto_update_sh} ]; then
-# 	echo "执行自动更新的文件[${auto_update_sh} ${svr}]"
-# 	${auto_update_sh} ${svr} >/dev/null 2>&1
-# else
-# 	echo "自动更新的文件[${auto_update_sh}]不存在"
-# fi
-
 ######################### 以下内容一般无需修改 #########################
 #保存日志的目录
 log_path=/opt/log
@@ -34,26 +24,12 @@ elog=${svr}.log.err         #设置err日志名
 log_bak=${svr}.log.$(date +%Y%m%d_%H%M%S).log
 elog_bak=${svr}.log.$(date +%Y%m%d_%H%M%S).err
 
-#如果是在刘庆的目录 才执行如下命令
-if [ "$HOME" = "/home/liuqing" ] || [ "${HOSTNAME}" = "mozit_jjcDev" ]; then
-    MV=cp        # 开发时需要tail日志 又不想每次重启时重新执行一次tail命令 就不用mv只用cp啦
-fi
 
 #准备工作 允许生成core文件 并切换到脚本所在路径
 ulimit -c 1000000
 ShDir=${0%/*}
 cd $ShDir
 
-tdir=countinfo
-if [ ! -d $tdir ]; then
-    mkdir $tdir
-    sleep 1
-fi
-
-#if [ ! -d ${log_path} ]; then
-#       mkdir ${log_path}
-#       sleep 1
-#fi
 
 #杀进程
 killall -9 -q ${svr}
