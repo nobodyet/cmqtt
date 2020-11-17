@@ -31,7 +31,7 @@ $(LIB_A):$(OBJS)
 	@echo -e "\\033[32m $(LIB_A) is OK \\033[0m"
 
 # lib.so 
-$(LIB_SO):  $(wildcard *.c)
+$(LIB_SO):  $(wildcard *.c)  $(wildcard *.h)
 	$(CC) -fPIC $(CFLAGS) core.c
 	$(CC) -fPIC $(CFLAGS) mqtta.c
 	$(CC) -fPIC $(CFLAGS) regfunc.c

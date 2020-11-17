@@ -221,7 +221,7 @@ int main(int argc, char **argv)
 		log("启动 Hall 线程完毕 \n");
 		sleep(1);
 	}
-	edit by liuqing 20180920 这个线程没用 先屏蔽掉
+	//edit by liuqing 20180920 这个线程没用 先屏蔽掉
 	{
 		pthread_t tRepeatRun;
 		pthread_create(&tRepeatRun, NULL, (void *)RepeatRun, NULL);

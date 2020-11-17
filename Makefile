@@ -41,28 +41,26 @@ CP = cp -rf
 RM = rm -rf
 
 #默认的make目标
-all: lib $(TARGET) $(MQTT_LIB) $(CORE_LIB) 
+all:  lib $(TARGET) $(MQTT_LIB) $(CORE_LIB)  
 
 #
 lib:
 	cd lib && $(MAKE)
-	cd $(CORE_LIB_PATH) && $(MAKE)
-	cd $(MQTT_LIB_SRC)  && $(MAKE)
 ifneq (,$(wildcard ./src/main.c))
 	@#如果存在main.c则需要清除及重新编译
 	cd src && $(MAKE)
 endif
 
 #目标 生成游戏主程序 并附带copy一些脚本
-$(TARGET): ./src/main.o $(MQTT_LIB) $(CORE_LIB)  $(wildcard $(CORE_LIB_PATH)/*.c) $(wildcard $(CORE_LIB_PATH)/*.h)
+$(TARGET): ./src/main.o $(MQTT_LIB) $(CORE_LIB)  $(wildcard $(CORE_LIB_PATH)/*.c) $(wildcard $(CORE_LIB_PATH)/*.h) 
 	@# 后面的lib库在调整先后位置后可能导致编译出错哦
 	$(CP) $(CORE_LIB_PATH)$(CORE_LIB) $(SO_LIB)
 	$(CP) $(MQTT_LIB_PATH)$(MQTT_LIB) $(SO_LIB) 
 	$(CC) $(CFLAGS) ./src/main.o $(COMMON_LIB_PATH)$(COMMON_LIB)  $(MYLIBS)  $(SO_LIB)/$(CORE_LIB)  $(SO_LIB)/$(MQTT_LIB)  -o $(TARGET)
 	$(CP) $(TARGET) $(RUN_PATH)
 	$(RM) $(RUN_PATH)/$(SO_LIB) && $(CP)   $(SO_LIB) $(RUN_PATH)
-	#$(RM) $(TARGET)
-	@echo -e "\\033[32m $(TARGET) is OK and move to Dir $(RUN_PATH)  \\033[0m"
+	$(RM) $(TARGET)
+	@echo -e "\\033[32m $(TARGET) is OK and Move to DIR: $(RUN_PATH)  \\033[0m"
 
 # MQTT_LIB 的生成方法
 $(MQTT_LIB): $(wildcard $(MQTT_LIB_SRC)/src/*.c) $(wildcard $(MQTT_LIB_SRC)/src/*.h)

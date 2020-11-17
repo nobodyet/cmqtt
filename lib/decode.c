@@ -45,7 +45,7 @@ void RepeatRun(void)
 	while (1)
 	{
 		sleep(60);
-		core_stats()
+		core_stats();
 		//core_repeat_1s(timeGloble_g);
 	}
 }
