@@ -35,6 +35,8 @@ typedef struct cmd_pro *cmd_pro_t;
 *******************************************************************************/
 int decode_msg_handle(const char *topic, MQTTAsync_message *msg, void *context);
 
+// 自动注册需要监听的消息列表
+int regTopicFromTable(void);
 /********************************************************************************
 * @Function: print_stats
 * @Brief:  打印运行统计

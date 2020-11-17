@@ -20,7 +20,7 @@
  ******************************************************************/
 int db_init(MYSQL *db)
 {
-  int ret;
+  int ret = 1;
 
   if (db)
   {
@@ -50,6 +50,8 @@ int core_init(void)
 
   // init mqtt.client
   init_mqtt_client();
+  sleep (1);
+	regTopicFromTable();
   return ret;
 }
 
@@ -84,13 +86,17 @@ int core_heart_1s(unsigned int nowTime)
   return ret;
 }
 
+
+// 初始化时候进行部分测试,可以随意添加
 int core_do_test(void)
 {
-  decode_msg_handle("TEST", NULL, NULL);
+  //decode_msg_handle("TEST", NULL, NULL);
   print_stats();
   return 0;
 }
 
+
+// 定期调用会话统计信息, 分钟级别
 int core_stats(void)
 {
   print_stats();

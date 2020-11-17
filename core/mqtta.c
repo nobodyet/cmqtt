@@ -137,7 +137,7 @@ int my_mqqta_sendmsg(char *topicName, MQTTAsync_message *pubmsg)
 int my_mqqta_recvmsg(void *context, char *topicName, int topicLen, MQTTAsync_message *message)
 {
 
-    debug("Message arrived: topic: %s payload: %.*s\n", topicName, message->payloadlen, (char *)message->payload);
+    debug("Message arrived: topic: %s payload.length=%d\n", topicName, message->payloadlen);
     // 解码消息,实际的业务逻辑函数
     decode_msg_handle(topicName, message, context);
 
@@ -152,7 +152,7 @@ int my_subsribe_topic(char *topic, int qos)
     MQTTAsync client = (MQTTAsync)client_context;
     MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
     int rc;
-    printf("Subscribing to topic %s\nfor client %s using QoS%d", topic, MQTT_CLIENTID_g, qos);
+    log("Subscribing to topic %s for client %s using QoS%d \n", topic, MQTT_CLIENTID_g, qos);
     //opts.onSuccess = onSubscribe;
     //opts.onFailure = onSubscribeFailure;
     opts.context = client;
@@ -166,7 +166,7 @@ int my_unsubsribe_topic(char *topic, int qos)
     MQTTAsync client = (MQTTAsync)client_context;
     MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
     int rc;
-    printf("unSubscribing to topic %s\nfor client %s using QoS%d", topic, MQTT_CLIENTID_g, qos);
+    log("unSubscribing to topic %s for client %s using QoS%d\n", topic, MQTT_CLIENTID_g, qos);
     //opts.onSuccess = onUnSubscribe;
     //opts.onFailure = onUnSubscribeFailure;
     opts.context = client;
@@ -216,8 +216,8 @@ int init_mqtt_client()
 
         exit(EXIT_FAILURE);
     }
-
-    //assert(MQTTASYNC_TRUE == MQTTAsync_isConnected(client));
+    sleep(2);
+    assert(MQTTASYNC_TRUE == MQTTAsync_isConnected(client));
 
     //MQTTAsync_destroy(&client);
     return rc;

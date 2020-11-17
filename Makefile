@@ -74,7 +74,8 @@ $(CORE_LIB): $(wildcard $(CORE_LIB_PATH)/*.c) $(wildcard $(CORE_LIB_PATH)/*.h)
 #普通清理
 clean:
 	cd lib && $(MAKE) clean
-	$(RM) $(TARGET)
+	-$(RM) $(SO_LIB)/*.so
+	-$(RM) $(TARGET)
 ifneq (,$(wildcard ./src/main.c))
 	@#如果存在main.c则需要清除及重新编译
 	cd src && $(MAKE) clean
