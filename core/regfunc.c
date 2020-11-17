@@ -89,7 +89,7 @@ int print_stats()
     int sec;
 
     sec = timeGloble_g - timeBegin_g;
-    log("__STATS Running.time.cost=%dh%dm%ds second.total=%d\n", sec / 3600, sec / 60, sec % 60, sec);
+    log("__STATS Running.time.cost=%dh%dm%ds second.total=%d nowTime=%d\n", sec / 3600, sec / 60, sec % 60, sec, timeGloble_g);
 
     log("__STATS Rcv.msg.total=%d\n", msgcnt);
     for (i = 0; i < ctr_table_size; i++)

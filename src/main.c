@@ -221,13 +221,13 @@ int main(int argc, char **argv)
 		log("启动 Hall 线程完毕 \n");
 		sleep(1);
 	}
-	//edit by liuqing 20180920 这个线程没用 先屏蔽掉
-	//{
-	//pthread_t tRepeatRun;
-	//pthread_create(&tRepeatRun, NULL, (void *)RepeatRun, NULL);
-	// log("启动 RepeatRun 线程完毕 \n");
-	// sleep(1);
-	//}
+	edit by liuqing 20180920 这个线程没用 先屏蔽掉
+	{
+		pthread_t tRepeatRun;
+		pthread_create(&tRepeatRun, NULL, (void *)RepeatRun, NULL);
+		log("启动 RepeatRun 线程完毕 \n");
+		sleep(1);
+	}
 
 	/*	休眠10秒，确保其他初始化已经完成，最后打开监听端口  2006-11-12 14:34:41	*/
 	sleep(2);

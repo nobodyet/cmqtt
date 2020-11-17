@@ -91,4 +91,9 @@ int core_do_test(void)
   return 0;
 }
 
+int core_stats(void)
+{
+  print_stats();
+}
+
 /* END */

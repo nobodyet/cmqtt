@@ -44,7 +44,8 @@ void RepeatRun(void)
 	log("This is in RepeatRun! pid=%d  tid=%ld  lwpid=%lu\n", getpid(), pthread_self(), syscall(SYS_gettid));
 	while (1)
 	{
-		sleep(1);
+		sleep(60);
+		core_stats()
 		//core_repeat_1s(timeGloble_g);
 	}
 }
