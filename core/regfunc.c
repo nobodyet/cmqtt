@@ -20,10 +20,82 @@
 //  int do_A1(char *topicName, MQTTAsync_message *recvmsg, MYSQL *_db, void *context)
 
 static int ctr_table_size = sizeof(ctr_handle_tab) / sizeof(struct cmd_pro); //数组大小
+static int topicNumLocal = sizeof(ctr_handle_tab) / sizeof(struct cmd_pro);  //配置文件中读取的Topic 数目
+static struct cmd_pro *handleTableLocal;                                     //根据配置文件中的设定,启用向对应的topic_function
+static unsigned int msgcnt = 0;                                              //全局消息计数器
 
-static unsigned int msgcnt = 0; //全局消息计数器
 //------------------------------- 全局变量声明 ------------------------------
+/********************************************************************************
+* @Function:initTopicConf
+* @Brief:   从配置文件中加载Topic内容 
+* @Param: 
+* @Return: 无
+* @Date: 2020-11-15 17:22:17
+*******************************************************************************/
+int initTopicConf()
+{
+    int i, ret, idx;
+    char tmpstr[128] = {0};
+    char resstr[128] = {0} ;
+    int iDefault = 0;
 
+    ret = atoi(GetInitKey(CONFIG_FILE, "TOPIC", "DEFAULT"));
+    if ((ret == 1) || (ret == 0))
+        iDefault = ret;
+    elog( " 服务启用=1, 禁用=0,  当前设定的默认值=%d ++++\n",iDefault);
+
+    ret = atoi(GetInitKey(CONFIG_FILE, "TOPIC", "NUM"));
+    topicNumLocal = ret ? ret : topicNumLocal;
+
+    if (topicNumLocal > ctr_table_size)
+    {
+        topicNumLocal = ctr_table_size;
+        elog(" 配置的Topic数目超过 程序内置Topic数目, 默认截断处理  num=%d ++++ \n", topicNumLocal);
+    }
+
+    handleTableLocal = malloc(sizeof(struct cmd_pro) * topicNumLocal);
+    if (handleTableLocal == NULL)
+        exit(1);
+    memset(handleTableLocal, 0, sizeof(struct cmd_pro) * topicNumLocal);
+
+    // loading  topic 配置
+    idx = 0;
+    for (i = 0; i < topicNumLocal; i++)
+    {
+        sprintf(tmpstr, "%d", i);
+        strcpy(resstr,GetInitKey(CONFIG_FILE, "TOPIC", tmpstr) );
+        if (0 == strlen(resstr))
+        {
+            ret = iDefault;
+            log("启用缺省配置 Topic[%d]=%d +++++ \n", i, ret);
+        }
+        else
+        {
+            ret = atoi(resstr);
+        }
+
+        if (ret == 1)
+        {
+            //表示启用对应的Topic 服务,进行相应的注册
+            handleTableLocal[idx].bc = ctr_handle_tab[i].bc;
+            handleTableLocal[idx].cnt = 0;
+            strcpy(handleTableLocal[idx].topic_name, ctr_handle_tab[i].topic_name);
+            log("从配置文件中启用 index=%d TopicName=%s bc=%p 服务启用 \n", i, ctr_handle_tab[i].topic_name, ctr_handle_tab[i].bc);
+            ++idx;
+        }
+        else
+        {
+            log("从配置文件中禁用 index=%d TopicName=%s bc=%p 服务禁用+++\n", i, ctr_handle_tab[i].topic_name, ctr_handle_tab[i].bc);
+        }
+    }
+    //校验topic 配置, bc字段不能为空;
+    for (i = 0; i < idx; i++)
+    {
+        assert(handleTableLocal[i].bc);
+    }
+
+    return topicNumLocal;
+}
 /********************************************************************************
 * @Function: 
 * @Brief:    控制类消息处理函数
@@ -34,12 +106,17 @@ static unsigned int msgcnt = 0; //全局消息计数器
 int regTopicFromTable(void)
 {
     int idx = 0;
-    for (idx = 0; idx < ctr_table_size; idx++)
-        if (ctr_handle_tab[idx].bc)
+    struct cmd_pro *phandleTable = NULL;
+
+    for (idx = 0; idx < topicNumLocal; idx++)
+    {
+        phandleTable = handleTableLocal + idx;
+        if (phandleTable->bc)
         {
-            my_subsribe_topic(ctr_handle_tab[idx].topic_name, 0);
+            my_subsribe_topic(phandleTable->topic_name, 0);
             sleep(2);
         }
+    }
     return 0;
 }
 
@@ -54,36 +131,43 @@ int decode_msg_handle(const char *topic, MQTTAsync_message *msg, void *context)
 {
     static int idx = 0;
     static MYSQL *_mysqlcon = NULL;
+    static struct cmd_pro *pHandle = NULL;
 
     msgcnt++; //全局消息计数器 +1
 
     if (!_mysqlcon)
     {
+        // 先申请内存再初始化
         _mysqlcon = malloc(sizeof(MYSQL));
         db_init(_mysqlcon);
+
+        pHandle = handleTableLocal;
     }
 
     // Try  cache and hit
-    if ((idx < ctr_table_size) && strcmp(topic, ctr_handle_tab[idx].topic_name) == 0)
+    if (strcmp(topic, pHandle->topic_name) == 0)
     {
-        ctr_handle_tab[idx].bc(topic, msg, _mysqlcon, context);
-        ctr_handle_tab[idx].cnt++; //消息计数器 +1
-        debug("idx=%d topic=%s func=%p decode msg\n", idx, topic, ctr_handle_tab[idx].bc);
+        pHandle->bc(topic, msg, _mysqlcon, context);
+        pHandle->cnt++; //消息计数器 +1
+        debug("idx=%d topic=%s func=%p decode msg\n", idx, topic, pHandle->bc);
         return 0;
     }
 
     // loop all of it
-    for (idx = 0; idx < ctr_table_size; idx++)
+    for (idx = 0; idx < topicNumLocal; idx++)
     {
-        if (strcmp(topic, ctr_handle_tab[idx].topic_name) == 0)
+        pHandle = handleTableLocal + idx;
+        if (strcmp(topic, pHandle->topic_name) == 0)
         {
-            ctr_handle_tab[idx].bc(topic, msg, _mysqlcon, context);
-            ctr_handle_tab[idx].cnt++; //消息计数器 +1
-            debug("idx=%d topic=%s func=%p decode msg\n", idx, topic, ctr_handle_tab[idx].bc);
-            break;
+            pHandle->bc(topic, msg, _mysqlcon, context);
+            pHandle->cnt++; //消息计数器 +1
+            debug("idx=%d topic=%s func=%p decode msg\n", idx, topic, pHandle->bc);
+            return 0;
         }
     }
 
+    //进入这里,说明 该消息没有注册,无对应解码函数,临时打印. 可以考虑归集此类消息
+    elog("WARNING: Recv.topic没有注册, Topic=%s\n", topic);
     return 0;
 }
 /********************************************************************************
@@ -102,9 +186,9 @@ int print_stats()
     log("__STATS Running.time.cost=%dh%dm%ds second.total=%d nowTime=%d\n", sec / 3600, sec / 60, sec % 60, sec, timeGloble_g);
 
     log("__STATS Rcv.msg.total=%d\n", msgcnt);
-    for (i = 0; i < ctr_table_size; i++)
+    for (i = 0; i < topicNumLocal; i++)
     {
-        log("__STATS topic=%s num=%d func=%p\n", ctr_handle_tab[i].topic_name, ctr_handle_tab[i].cnt, ctr_handle_tab[i].bc);
+        log("__STATS topic=%s num=%d func=%p\n", handleTableLocal[i].topic_name, handleTableLocal[i].cnt, handleTableLocal[i].bc);
     }
 
     return 0;

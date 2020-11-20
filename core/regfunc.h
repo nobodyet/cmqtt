@@ -17,6 +17,7 @@
 #include "../include/mysql.sdk.h"
 #include "../include/globle.h"
 #include "../include/debug.h"
+#include "../src/main.h"
 #include "MQTTAsync.h"
 struct cmd_pro
 {
@@ -34,6 +35,9 @@ typedef struct cmd_pro *cmd_pro_t;
 * @Date: 2020-11-15 17:22:17
 *******************************************************************************/
 int decode_msg_handle(const char *topic, MQTTAsync_message *msg, void *context);
+
+// 从配置文件中加载需要启用的Topic列表
+int initTopicConf(void);
 
 // 自动注册需要监听的消息列表
 int regTopicFromTable(void);

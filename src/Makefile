@@ -15,7 +15,7 @@ COPY = cp --reply=yes
 all:	$(TARGET) 
 	
 main.o :main.c
-	@$(CC)  $(FLAGS)  -c  $<
+	$(CC)  $(FLAGS)  -c  $<
 	@echo -e "\\033[32m $@ is OK    \\033[0m"
 	
 clean:

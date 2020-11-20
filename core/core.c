@@ -51,6 +51,9 @@ int core_init(void)
   // init mqtt.client
   init_mqtt_client();
   sleep(1);
+  // 加载Topic服务配置
+  initTopicConf();
+  // 注册Topic
   regTopicFromTable();
   return ret;
 }
@@ -65,9 +68,8 @@ int core_init(void)
  ******************************************************************/
 int core_heart(unsigned int nowTime)
 {
-  int ret = 0;
 
-  return ret;
+  return 0;
 }
 
 /******************************************************************
