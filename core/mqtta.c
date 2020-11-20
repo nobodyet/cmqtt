@@ -15,13 +15,14 @@
  *******************************************************************************/
 
 #include "mqtta.h"
+#include "regfunc.h"
 
 static void *client_context;
 static MQTTAsync_connectOptions client_conn_opts = MQTTAsync_connectOptions_initializer;
 
 void myReconnctMQTT(void *contxt)
 {
-    MQTTAsync client = (MQTTAsync)client_context;
+    MQTTAsync client = (MQTTAsync)contxt;
     MQTTAsync_connectOptions *conn_opts = &client_conn_opts;
     int rc;
     int count = 100;
@@ -51,12 +52,12 @@ void connlost(void *context, char *cause)
 
 void onDisconnectFailure(void *context, MQTTAsync_failureData *response)
 {
-    printf("Disconnect failed\n");
+    printf("Disconnect failed contxt=%p response=%p\n",context,response);
 }
 
 void onDisconnect(void *context, MQTTAsync_successData *response)
 {
-    printf("Successful disconnection\n");
+    printf("Successful disconnection contxt=%p response=%p\n",context,response);
 }
 
 void onSendFailure(void *context, MQTTAsync_failureData *response)
@@ -75,10 +76,10 @@ void onSendFailure(void *context, MQTTAsync_failureData *response)
         exit(EXIT_FAILURE);
     }
 }
-
+/****
 void onSubscribe(void *context, MQTTAsync_successData *response)
 {
-
+   
     return;
 }
 
@@ -87,6 +88,7 @@ void onSubscribeFailure(void *context, MQTTAsync_successData *response)
 
     return;
 }
+****/
 void onSend(void *context, MQTTAsync_successData *response)
 {
     MQTTAsync client = (MQTTAsync)context;
@@ -113,7 +115,7 @@ void onConnectFailure(void *context, MQTTAsync_failureData *response)
 void onConnect(void *context, MQTTAsync_successData *response)
 {
 
-    log("Successful connection\n");
+    log("Successful connection contxt=%p response=%p\n",context,response);
 }
 
 int my_mqqta_sendmsg(char *topicName, MQTTAsync_message *pubmsg)
@@ -138,9 +140,9 @@ int my_mqqta_sendmsg(char *topicName, MQTTAsync_message *pubmsg)
 int my_mqqta_recvmsg(void *context, char *topicName, int topicLen, MQTTAsync_message *message)
 {
 
-    debug("Message arrived: topic: %s payload.length=%d\n", topicName, message->payloadlen);
+    debug("Message arrived: topic: %s topic.len=%d  payload.len=%d\n", topicName, topicLen,message->payloadlen);
     // 解码消息,实际的业务逻辑函数
-    decode_msg_handle(topicName, message, context);
+    decode_msg_handle(topicName, message );
 
     MQTTAsync_freeMessage(&message);
     MQTTAsync_free(topicName);
@@ -198,7 +200,7 @@ int init_mqtt_client()
 
     conn_opts->keepAliveInterval = MQTT_KEEPALIVE_g;
     conn_opts->cleansession = 1;
-    conn_opts->onSuccess = onConnect;
+    //conn_opts->onSuccess = onConnect;
     conn_opts->onFailure = onConnectFailure;
     conn_opts->context = client;
 

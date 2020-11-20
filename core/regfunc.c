@@ -131,7 +131,7 @@ int regTopicFromTable(void)
 * @Return: 无
 * @Date: 2020-11-15 17:22:17
 *******************************************************************************/
-int decode_msg_handle(const char *topic, MQTTAsync_message *msg, void *context)
+int decode_msg_handle(const char *topic, MQTTAsync_message *msg)
 {
     static int idx = 0;
     static MYSQL *_mysqlcon = NULL;
@@ -151,7 +151,7 @@ int decode_msg_handle(const char *topic, MQTTAsync_message *msg, void *context)
     // Try  cache and hit
     if (strcmp(topic, pHandle->topic_name) == 0)
     {
-        pHandle->bc(topic, msg, _mysqlcon, context);
+        pHandle->bc(topic, msg, _mysqlcon);
         pHandle->cnt++; //消息计数器 +1
         debug("idx=%d topic=%s func=%p decode msg\n", idx, topic, pHandle->bc);
         return 0;
@@ -163,7 +163,7 @@ int decode_msg_handle(const char *topic, MQTTAsync_message *msg, void *context)
         pHandle = handleTableLocal + idx;
         if (strcmp(topic, pHandle->topic_name) == 0)
         {
-            pHandle->bc(topic, msg, _mysqlcon, context);
+            pHandle->bc(topic, msg, _mysqlcon);
             pHandle->cnt++; //消息计数器 +1
             debug("idx=%d topic=%s func=%p decode msg\n", idx, topic, pHandle->bc);
             return 0;

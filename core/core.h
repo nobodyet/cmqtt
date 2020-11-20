@@ -16,6 +16,7 @@
 ******************************************************************/
 #include "../include/debug.h"
 #include "mqtta.h"
+#include "regfunc.h"
 /******************************************************************
  *	Function Name:	core_init
  *	Arguments:

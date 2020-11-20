@@ -100,6 +100,7 @@ int core_do_test(void)
 int core_stats(void)
 {
   print_stats();
+	return 0;
 }
 
 /* END */

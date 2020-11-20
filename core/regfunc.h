@@ -23,7 +23,7 @@ struct cmd_pro
 {
     char topic_name[256];                                                            //频道名字
     unsigned int cnt;                                                                //调用次数
-    int (*bc)(const char *topic, MQTTAsync_message *msg, MYSQL *_db, void *context); //处理函数
+    int (*bc)(const char *topic, MQTTAsync_message *msg, MYSQL *_db); //处理函数
 };
 typedef struct cmd_pro *cmd_pro_t;
 
@@ -34,7 +34,7 @@ typedef struct cmd_pro *cmd_pro_t;
 * @Return: 无
 * @Date: 2020-11-15 17:22:17
 *******************************************************************************/
-int decode_msg_handle(const char *topic, MQTTAsync_message *msg, void *context);
+int decode_msg_handle(const char *topic, MQTTAsync_message *msg );
 
 // 从配置文件中加载需要启用的Topic列表
 int initTopicConf(void);
