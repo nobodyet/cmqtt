@@ -37,26 +37,26 @@ int initTopicConf()
     int i, ret, idx;
     char tmpstr[10] = {0};
 
-    ret = atoi(GetInitKey(configFilePath, "TOPIC", "NUM"));
+    ret = atoi(GetInitKey(CONFIG_FILE, "TOPIC", "NUM"));
     topicNumLocal = ret ? ret : topicNumLocal;
 
     if (topicNumLocal > ctr_table_size)
     {
-        topicNumLocal = ctr_handle_tab;
-        elog("配置的Topic数目超过 程序内置Topic数目, 默认截断处理  num=%d\h", topicNumLocal)
+        topicNumLocal = ctr_table_size;
+        elog("配置的Topic数目超过 程序内置Topic数目, 默认截断处理  num=%d\h", topicNumLocal);
     }
 
     handleTableLocal = malloc(sizeof(struct cmd_pro) * topicNumLocal);
     if (handleTableLocal == NULL)
         exit(1);
-    memset(handleTableLocal, sizeof(struct cmd_pro) * topicNumLocal);
+    memset(handleTableLocal, 0,sizeof(struct cmd_pro) * topicNumLocal);
 
     // loading  topic 配置
     idx = 0;
     for (i = 0; i < topicNumLocal; i++)
     {
         sprintf(tmpstr, "%d", i);
-        ret = atoi(GetInitKey(configFilePath, "TOPIC", tmpstr));
+        ret = atoi(GetInitKey(CONFIG_FILE, "TOPIC", tmpstr));
         if (ret == 1)
         {
             //表示启用对应的Topic 服务,进行相应的注册
@@ -73,7 +73,7 @@ int initTopicConf()
     }
 
     //校验topic 配置, bc字段不能为空;
-    for (int i = 0; i < idx; i++)
+    for ( i = 0; i < idx; i++)
     {
         assert(handleTableLocal[i].bc);
     }
@@ -115,7 +115,7 @@ int decode_msg_handle(const char *topic, MQTTAsync_message *msg, void *context)
 {
     static int idx = 0;
     static MYSQL *_mysqlcon = NULL;
-    static cmd_pro *phandle = NULL;
+    static struct cmd_pro *pHandle = NULL;
 
     msgcnt++; //全局消息计数器 +1
 

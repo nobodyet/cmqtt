@@ -17,6 +17,7 @@
 #include "../include/mysql.sdk.h"
 #include "../include/globle.h"
 #include "../include/debug.h"
+#include "../src/main.h"
 #include "MQTTAsync.h"
 struct cmd_pro
 {
