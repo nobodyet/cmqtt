@@ -72,7 +72,7 @@ int my_mqqta_sendmsg(char *topicName, MQTTAsync_message *pubmsg)
 int my_mqqta_recvmsg(void *context, char *topicName, int topicLen, MQTTAsync_message *message)
 {
 
-    debug("Message arrived: topic: %s topic.len=%d  payload.len=%d\n", topicName, topicLen, message->payloadlen);
+    debug("Message arrived: topic: %s topic.len=%d  payload.len=%d contxt=%p\n", topicName, topicLen, message->payloadlen,context);
     // 解码消息,实际的业务逻辑函数
     decode_msg_handle(topicName, message);
 

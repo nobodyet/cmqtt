@@ -68,8 +68,9 @@ int core_init(void)
  ******************************************************************/
 int core_heart(unsigned int nowTime)
 {
-
-  return 0;
+	int ret=0;
+	ret=nowTime;
+  return ret;
 }
 
 /******************************************************************
@@ -84,6 +85,7 @@ int core_heart(unsigned int nowTime)
 int core_heart_1s(unsigned int nowTime)
 {
   int ret = 0;
+	ret = nowTime;
   return ret;
 }
 

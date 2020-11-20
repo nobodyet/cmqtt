@@ -131,7 +131,7 @@ int regTopicFromTable(void)
 * @Return: 无
 * @Date: 2020-11-15 17:22:17
 *******************************************************************************/
-int decode_msg_handle(const char *topic, MQTTAsync_message *msg)
+int decode_msg_handle( char *topic, MQTTAsync_message *msg)
 {
     static int idx = 0;
     static MYSQL *_mysqlcon = NULL;

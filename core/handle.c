@@ -28,6 +28,14 @@ int do_test(char *topicName, MQTTAsync_message *recvmsg, MYSQL *_db)
     return 1;
 }
 
+
+//struct cmd_pro
+//{
+  //  char topic_name[256];                                                            //频道名字
+//  unsigned int cnt;                                                                //调用次数
+   // int (*bc)(const char *topic, MQTTAsync_message *msg, MYSQL *_db); //处理函数
+//};
+
 // 消息和其对应的处理函数表格,  建议频度从高往下排
 static struct cmd_pro ctr_handle_tab[] = {
     {"RRS123", 0, do_A1}, //远程重启终端设备系统
