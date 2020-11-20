@@ -107,6 +107,7 @@ void onSend(void *context, MQTTAsync_successData *response)
 void onConnectFailure(void *context, MQTTAsync_failureData *response)
 {
     printf("Connect failed, rc %d\n", response ? response->code : 0);
+	myReconnctMQTT(context);
 }
 
 void onConnect(void *context, MQTTAsync_successData *response)
