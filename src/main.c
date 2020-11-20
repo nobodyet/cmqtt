@@ -98,7 +98,11 @@ int main(int argc, char **argv)
 	{
 		time_t timep;
 		time(&timep);
-		printf("\n%s Main 启动时间:%s  pid=%d tid=%ld lwpid=%lu argc=%d\n\n", argv[0], ctime(&timep), getpid(), pthread_self(), syscall(SYS_gettid), argc);
+		printf("\n\n--------------------------------\n");
+		printf("\t\t本次编译时间:%s %s\n", __DATE__, __TIME__);
+		printf("%s Main 启动时间:%s  pid=%d tid=%ld lwpid=%lu argc=%d\n", argv[0], ctime(&timep), getpid(), pthread_self(), syscall(SYS_gettid), argc);
+		printf("--------------------------------\n\n");
+		fflush(stdout);
 	}
 
 	//edit by liuqing 20171128 新加文件锁 避免同一个名称的进程启动多个实例
@@ -181,6 +185,14 @@ int main(int argc, char **argv)
 		ret = atoi(GetInitKey(configFilePath, "MQTT", "MQTT_KEEPALIVE"));
 		MQTT_KEEPALIVE_g = ret ? ret : MQTT_KEEPALIVE_g;
 
+		// DB_SCAN_ENABLE  是否周期扫描数据库,1hz 默认关闭
+		ret = atoi(GetInitKey(configFilePath, "MQTT", "DB_SCAN_ENABLE"));
+		DB_SCAN_ENABLE_g = ret ? ret : DB_SCAN_ENABLE_g;
+
+		// TIME_SYNC_INTERVAL NTP时间同步间隔, 需要 DB_SCAN_ENABLE=1 作为前置条件
+		ret = atoi(GetInitKey(configFilePath, "MQTT", "TIME_SYNC_INTERVAL"));
+		TIME_SYNC_INTERVAL_g = ret ? ret : TIME_SYNC_INTERVAL_g;
+
 		memcpy(tmpResultStr, GetInitKey(configFilePath, "MQTT", "MQTT_SVR_IP"), 256);
 		if (strlen(tmpResultStr))
 			memcpy(MQTT_SVR_IP_g, tmpResultStr, 256);
@@ -222,12 +234,12 @@ int main(int argc, char **argv)
 		sleep(1);
 	}
 	//edit by liuqing 20180920 这个线程没用 先屏蔽掉
-	{
-		pthread_t tRepeatRun;
-		pthread_create(&tRepeatRun, NULL, (void *)RepeatRun, NULL);
-		log("启动 RepeatRun 线程完毕 \n");
-		sleep(1);
-	}
+	// {
+	// 	pthread_t tRepeatRun;
+	// 	pthread_create(&tRepeatRun, NULL, (void *)RepeatRun, NULL);
+	// 	log("启动 RepeatRun 线程完毕 \n");
+	// 	sleep(1);
+	// }
 
 	/*	休眠10秒，确保其他初始化已经完成，最后打开监听端口  2006-11-12 14:34:41	*/
 	sleep(2);

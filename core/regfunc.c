@@ -36,13 +36,13 @@ int initTopicConf()
 {
     int i, ret, idx;
     char tmpstr[128] = {0};
-    char resstr[128] = {0} ;
+    char resstr[128] = {0};
     int iDefault = 0;
 
     ret = atoi(GetInitKey(CONFIG_FILE, "TOPIC", "DEFAULT"));
     if ((ret == 1) || (ret == 0))
         iDefault = ret;
-    elog( " 服务启用=1, 禁用=0,  当前设定的默认值=%d ++++\n",iDefault);
+    elog(" 服务启用=1, 禁用=0,  当前设定的默认值=%d ++++\n", iDefault);
 
     ret = atoi(GetInitKey(CONFIG_FILE, "TOPIC", "NUM"));
     topicNumLocal = ret ? ret : topicNumLocal;
@@ -63,7 +63,7 @@ int initTopicConf()
     for (i = 0; i < topicNumLocal; i++)
     {
         sprintf(tmpstr, "%d", i);
-        strcpy(resstr,GetInitKey(CONFIG_FILE, "TOPIC", tmpstr) );
+        strcpy(resstr, GetInitKey(CONFIG_FILE, "TOPIC", tmpstr));
         if (0 == strlen(resstr))
         {
             ret = iDefault;
@@ -88,8 +88,12 @@ int initTopicConf()
             log("从配置文件中禁用 index=%d TopicName=%s bc=%p 服务禁用+++\n", i, ctr_handle_tab[i].topic_name, ctr_handle_tab[i].bc);
         }
     }
+
+    //修正实际的topic数目
+    topicNumLocal = idx;
+    log("\n\t\t 总计 启用 %d topic 服务 +++++++++ \n", topicNumLocal);
     //校验topic 配置, bc字段不能为空;
-    for (i = 0; i < idx; i++)
+    for (i = 0; i < topicNumLocal; i++)
     {
         assert(handleTableLocal[i].bc);
     }

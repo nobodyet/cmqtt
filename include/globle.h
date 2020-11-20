@@ -11,7 +11,10 @@ extern char MQTT_PWD_g[256];      // "MQTT_SVR_PWD";
 extern char MQTT_SVR_IP_g[256];   //"tcp://mqtt.eclipse.org:1883";
 extern int MQTT_KEEPALIVE_g;      //KEEPALIVE TIME
 
-extern int GAME_HEART_BEAT_g;     //心跳时间,默认微妙 1s=1000000ns
+extern int DB_SCAN_ENABLE_g;     //是否周期扫描数据库,1hz 默认关闭
+extern int TIME_SYNC_INTERVAL_g; // NTP时间同步间隔, 需要 DB_SCAN_ENABLE=1 作为前置条
+
+extern int GAME_HEART_BEAT_g;     // 10hz 心跳时间,默认微妙 1s=1000000ns
 extern unsigned int timeGloble_g; //时间计数器 每秒一次
 extern unsigned int timeBegin_g;  //时间计数器 每秒一次
 
