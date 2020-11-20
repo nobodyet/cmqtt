@@ -84,7 +84,6 @@ int core_heart(unsigned int nowTime)
 int core_heart_1s(unsigned int nowTime)
 {
   int ret = 0;
-
   return ret;
 }
 
@@ -100,7 +99,7 @@ int core_do_test(void)
 int core_stats(void)
 {
   print_stats();
-	return 0;
+  return 0;
 }
 
 /* END */
