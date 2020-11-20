@@ -36,12 +36,13 @@ int initTopicConf()
 {
     int i, ret, idx;
     char tmpstr[128] = {0};
-    char resstr[128] = ;
+    char resstr[128] = {0} ;
     int iDefault = 0;
 
     ret = atoi(GetInitKey(CONFIG_FILE, "TOPIC", "DEFAULT"));
     if ((ret == 1) || (ret == 0))
         iDefault = ret;
+    elog( " 服务启用=1, 禁用=0,  当前设定的默认值=%d ++++\n",iDefault);
 
     ret = atoi(GetInitKey(CONFIG_FILE, "TOPIC", "NUM"));
     topicNumLocal = ret ? ret : topicNumLocal;
@@ -49,7 +50,7 @@ int initTopicConf()
     if (topicNumLocal > ctr_table_size)
     {
         topicNumLocal = ctr_table_size;
-        elog(" 配置的Topic数目超过 程序内置Topic数目, 默认截断处理  num=%d\n", topicNumLocal);
+        elog(" 配置的Topic数目超过 程序内置Topic数目, 默认截断处理  num=%d ++++ \n", topicNumLocal);
     }
 
     handleTableLocal = malloc(sizeof(struct cmd_pro) * topicNumLocal);
@@ -62,11 +63,11 @@ int initTopicConf()
     for (i = 0; i < topicNumLocal; i++)
     {
         sprintf(tmpstr, "%d", i);
-        strcpy(GetInitKey(CONFIG_FILE, "TOPIC", tmpstr), resstr);
+        strcpy(resstr,GetInitKey(CONFIG_FILE, "TOPIC", tmpstr) );
         if (0 == strlen(resstr))
         {
             ret = iDefault;
-            log("启用缺省配置 Topic[%d]=%d \n", i, ret);
+            log("启用缺省配置 Topic[%d]=%d +++++ \n", i, ret);
         }
         else
         {
