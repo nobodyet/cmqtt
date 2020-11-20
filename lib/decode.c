@@ -65,18 +65,19 @@ void Hall(void)
 
 		core_heart(nowTime);
 
-		// 可能本次心跳处理耗时超过了1s
-		if ((timeGloble_g - nowTime) > 1)
-		{
-			printf("Hall doTimes:%d used:%ds(%d-%d)\n", doTimes, timeGloble_g - nowTime, timeGloble_g, nowTime);
-			fflush(stdout);
-		}
 
 		//edit by liuqing 20171215 游戏逻辑的心跳只需要1秒调用一次
 		if (lastHeartTime != nowTime)
 		{
 			lastHeartTime = nowTime;
 			core_heart_1s(nowTime);
+		}
+		
+		// 可能本次心跳处理耗时超过了1s
+		if ((timeGloble_g - nowTime) > 1)
+		{
+			log("Hall 心跳间隔过长  used:%ds=(%d-%d)\n", timeGloble_g - nowTime, timeGloble_g, nowTime);
+			fflush(stdout);
 		}
 
 	} // while

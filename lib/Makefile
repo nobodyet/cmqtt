@@ -25,16 +25,16 @@ $(LIB_A):$(OBJS)
 	@echo -e "\\033[32m $(LIB_A) is OK \\033[0m"
 
 decode.o: decode.c $(INC_PATH)/decode.h
-	@$(CC) $(CFLAGS) decode.c
+	$(CC) $(CFLAGS) $<
 
 globle.o: globle.c $(INC_PATH)/globle.h
-	@$(CC) $(CFLAGS) globle.c
+	$(CC) $(CFLAGS) $<
 
 mysql.sdk.o:mysql.sdk.c
-		@$(CC) $(CFLAGS) $<
+	$(CC) $(CFLAGS) $<
 
 init.o:init.c
-	@$(CC) $(CFLAGS) $<
+	$(CC) $(CFLAGS) $<
 
 
 clean: cleanall

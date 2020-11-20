@@ -36,6 +36,10 @@ int initTopicConf()
 {
     int i, ret, idx;
     char tmpstr[10] = {0};
+	int iDefault=0;
+
+    ret = atoi(GetInitKey(CONFIG_FILE, "TOPIC", "DEFAULT"));
+    if( (ret ==1) || (ret==0)) iDefault = ret;
 
     ret = atoi(GetInitKey(CONFIG_FILE, "TOPIC", "NUM"));
     topicNumLocal = ret ? ret : topicNumLocal;
@@ -43,7 +47,7 @@ int initTopicConf()
     if (topicNumLocal > ctr_table_size)
     {
         topicNumLocal = ctr_table_size;
-        elog("配置的Topic数目超过 程序内置Topic数目, 默认截断处理  num=%d\h", topicNumLocal);
+        elog(" 配置的Topic数目超过 程序内置Topic数目, 默认截断处理  num=%d\n", topicNumLocal);
     }
 
     handleTableLocal = malloc(sizeof(struct cmd_pro) * topicNumLocal);
@@ -51,12 +55,15 @@ int initTopicConf()
         exit(1);
     memset(handleTableLocal, 0, sizeof(struct cmd_pro) * topicNumLocal);
 
+
+	
     // loading  topic 配置
     idx = 0;
     for (i = 0; i < topicNumLocal; i++)
     {
         sprintf(tmpstr, "%d", i);
         ret = atoi(GetInitKey(CONFIG_FILE, "TOPIC", tmpstr));
+	if (iDefault ==0)  {
         if (ret == 1)
         {
             //表示启用对应的Topic 服务,进行相应的注册
@@ -70,6 +77,23 @@ int initTopicConf()
         {
             log("从配置文件中禁用 index=%d TopicName=%s bc=%p 服务禁用+++\n", i, ctr_handle_tab[i].topic_name, ctr_handle_tab[i].bc);
         }
+	}
+	if(iDefault ==1){
+	
+        if (ret != 0)
+        {
+            //表示启用对应的Topic 服务,进行相应的注册
+            handleTableLocal[idx].bc = ctr_handle_tab[i].bc;
+            handleTableLocal[idx].cnt = 0;
+            strcpy(handleTableLocal[idx].topic_name, ctr_handle_tab[i].topic_name);
+            log("从配置文件中启用 index=%d TopicName=%s bc=%p 服务启用 \n", i, ctr_handle_tab[i].topic_name, ctr_handle_tab[i].bc);
+            ++idx;
+        }
+        else
+        {
+            log("从配置文件中禁用 index=%d TopicName=%s bc=%p 服务禁用+++\n", i, ctr_handle_tab[i].topic_name, ctr_handle_tab[i].bc);
+        }
+	}
     }
 
     //校验topic 配置, bc字段不能为空;
