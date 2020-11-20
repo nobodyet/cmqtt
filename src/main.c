@@ -93,7 +93,6 @@ size_t get_executable_path(char *processdir, char *processname, size_t len)
  ******************************************************************/
 int main(int argc, char **argv)
 {
-	int i;
 	int ret;
 
 	{
@@ -123,11 +122,12 @@ int main(int argc, char **argv)
 
 	if (argc == 2)
 	{
+		int chari;
 		log("默认配置文件=%s%s\n", argv[1], CONFIG_FILE);
-		i = strlen(argv[1]);
-		if ((argv[1][i - 1]) == '/')
+		chari = strlen(argv[1]);
+		if ((argv[1][chari - 1]) == '/')
 		{
-			argv[1][i - 1] = 0;
+			argv[1][chari - 1] = 0;
 		}
 	}
 	else
