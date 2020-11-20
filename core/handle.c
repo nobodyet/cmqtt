@@ -16,16 +16,25 @@
 * @Return: 无
 * @Date: 2019-08-26 14:54:18
 *******************************************************************************/
-int do_A1(char *topicName, MQTTAsync_message *recvmsg, MYSQL *_db, void *context)
+int do_A1(char *topicName, MQTTAsync_message *recvmsg, MYSQL *_db )
 {
+	debug("topicName=%s msg=%p db=%p \n", topicName, recvmsg, _db);
     return 1;
 }
 
-int do_test(char *topicName, MQTTAsync_message *recvmsg, MYSQL *_db, void *context)
+int do_test(char *topicName, MQTTAsync_message *recvmsg, MYSQL *_db)
 {
-    debug("topicName=%s msg=%p db=%p context=%p\n", topicName, recvmsg, _db, context);
+    debug("topicName=%s msg=%p db=%p \n", topicName, recvmsg, _db);
     return 1;
 }
+
+
+//struct cmd_pro
+//{
+  //  char topic_name[256];                                                            //频道名字
+//  unsigned int cnt;                                                                //调用次数
+   // int (*bc)(const char *topic, MQTTAsync_message *msg, MYSQL *_db); //处理函数
+//};
 
 // 消息和其对应的处理函数表格,  建议频度从高往下排
 static struct cmd_pro ctr_handle_tab[] = {
