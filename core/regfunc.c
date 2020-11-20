@@ -49,7 +49,7 @@ int initTopicConf()
     handleTableLocal = malloc(sizeof(struct cmd_pro) * topicNumLocal);
     if (handleTableLocal == NULL)
         exit(1);
-    memset(handleTableLocal, 0,sizeof(struct cmd_pro) * topicNumLocal);
+    memset(handleTableLocal, 0, sizeof(struct cmd_pro) * topicNumLocal);
 
     // loading  topic 配置
     idx = 0;
@@ -73,7 +73,7 @@ int initTopicConf()
     }
 
     //校验topic 配置, bc字段不能为空;
-    for ( i = 0; i < idx; i++)
+    for (i = 0; i < idx; i++)
     {
         assert(handleTableLocal[i].bc);
     }
@@ -121,8 +121,10 @@ int decode_msg_handle(const char *topic, MQTTAsync_message *msg, void *context)
 
     if (!_mysqlcon)
     {
+        // 先申请内存再初始化
         _mysqlcon = malloc(sizeof(MYSQL));
         db_init(_mysqlcon);
+
         pHandle = handleTableLocal;
     }
 
@@ -144,10 +146,12 @@ int decode_msg_handle(const char *topic, MQTTAsync_message *msg, void *context)
             pHandle->bc(topic, msg, _mysqlcon, context);
             pHandle->cnt++; //消息计数器 +1
             debug("idx=%d topic=%s func=%p decode msg\n", idx, topic, pHandle->bc);
-            break;
+            return 0;
         }
     }
 
+    //进入这里,说明 该消息没有注册,无对应解码函数,临时打印. 可以考虑归集此类消息
+    elog("WARNING: Recv.topic没有注册, Topic=%s\n", topic);
     return 0;
 }
 /********************************************************************************
